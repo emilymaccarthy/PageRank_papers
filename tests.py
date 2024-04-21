@@ -3,7 +3,7 @@
 #   2- Correr en la terminal "pytest tests.py"
 
 import pytest
-from matrices_ralas import MatrizRala
+from matricesRalas import MatrizRala, GaussJordan 
 import numpy as np
 
 class TestIndexacionMatrices:
@@ -106,3 +106,10 @@ class TestProductoMatricial:
         C1 = A @ Id
         C2 = Id @ A
         assert C1[0,0] == 1 and C1[0,2] == 3 and C1[1,2] == 4 and C2[0,0] == 1 and C2[0,2] == 3 and C2[1,2] == 4 and C1.shape == C2.shape and C1.shape == A.shape
+
+class GaussJordan:
+    def test_soltrivial(self):
+        A = MatrizRala(3,3)
+        B = MatrizRala(3,1)
+        
+        assert 
