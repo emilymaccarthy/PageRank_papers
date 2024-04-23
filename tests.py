@@ -107,9 +107,9 @@ class TestProductoMatricial:
         C2 = Id @ A
         assert C1[0,0] == 1 and C1[0,2] == 3 and C1[1,2] == 4 and C2[0,0] == 1 and C2[0,2] == 3 and C2[1,2] == 4 and C1.shape == C2.shape and C1.shape == A.shape
 
-class GaussJordan:
-    def test_soltrivial(self):
-        A = MatrizRala(3,3)
-        B = MatrizRala(3,1)
-        
-        assert 
+#class GaussJordan:
+#    def test_soltrivial(self):
+#        A = MatrizRala(3,3)
+#        B = MatrizRala(3,1)
+#        
+#        assert 
