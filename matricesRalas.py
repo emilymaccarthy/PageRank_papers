@@ -317,7 +317,7 @@ def GaussJordan( A, b ):
                 fila_pivot = mat_aumentada[i,k] * factor
                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
          
-                
+    contador0 = 0       
     #eliminacion hacia arriba
     for i in range(1,A.shape[0]):
         pivot = mat_aumentada[i, i]
@@ -341,9 +341,18 @@ def GaussJordan( A, b ):
                 #la filadel pivot actual que estamos calculando 
                 fila_pivot = mat_aumentada[i,k] * factor
                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
+    #chequeo si es inconsistente            
+    for i in range(A.shape[0]):
+        for j in range(mat_aumentada.shape[1]):
+            if mat_aumentada[i,j] == 0:
+                contador0 += 1
 
+        if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == A.shape[1]:
+            sol = "sistema es incosistente, no tiene solucion"
+            return sol
+        
     #hacer unos en los pivots 
-    contador0 = 0
+   
     #para cada fila 
     for i in range(A.shape[0]):
         #para cada columnas
@@ -356,14 +365,19 @@ def GaussJordan( A, b ):
                 else:
                     mat_aumentada.__setitem__((i,j),0.0)
                     
-    #chequeo si es inconsistente            
-    for i in range(A.shape[0]):
-        for j in range(mat_aumentada.shape[1]):
-            if mat_aumentada[i,j] == 0:
-                contador0 += 1
-
-        if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == A.shape[1]:
-            sol = "sistema es incosistente, no tiene solucion"
-            return sol
+    
                 
     return sol
+
+def crear_W(data_csv):
+    return 
+
+
+def crear_D(W):
+    resultado = MatrizRala(W.shape)
+    contador = 0
+    for i in W.shape[0]:
+        for j in W.shape[1]:
+            if W[i,j] == 1:
+                contador += 1
+        resultado[i,i] = contador

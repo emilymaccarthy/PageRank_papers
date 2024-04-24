@@ -87,32 +87,76 @@ def main():
     # D.mod_fila_entera(0,[2,4])
     # print(D)
     
-    #ejercicio 2
-    A = MatrizRala(3,3)
-    A[1,1] = 1
-    A[1,0] = 1
-    A[0,1] = 2
-    A[0,0] = 1
-    A[1,3] = 2
-    A[2,0] = 4
-    A[2,2] = 3
-    A[2,1] = 5
-    b = MatrizRala(3,1)
-    b[0,0] = 3
-    x = GaussJordan(A,b)
-    print(x)
+    # #ejercicio 2
+    # A = MatrizRala(3,3)
+    # A[1,1] = 1
+    # A[1,0] = 1
+    # A[0,1] = 2
+    # A[0,0] = 1
+    # A[1,3] = 2
+    # A[2,0] = 4
+    # A[2,2] = 3
+    # A[2,1] = 5
+    # b = MatrizRala(3,1)
+    # b[0,0] = 3
+    # x = GaussJordan(A,b)
+    # print(x)
     
     #W ∈ RN×N tal que Wij = 1 si pj cita a pi y Wij = 0 sino. A la matriz diagonal D ∈ RN×N condii = 1 /ci
    #Y siendo 1 el vector de RN de todos unos.
-    #ejercicio 3
+   
+    #ejercicio 3 con numpy
     filas = [0,0,0,1,4,5,5,6,6,6,7,8,9]
     columnas = [2,3,4,0,10,0,6,0,7,8,8,5,8]
+    #[A,B,C,D,E,F,G,H,I,J,K]
+    #[0,1,2,3,4,5,6,7,8,9,10]
+    # W ij = 1 , 
+    # a es citado por c,d,e
+    # b es citado por a
+    
+    # e es citado por k
+    # f es citado po g,a
+    # g es citado por h,i,a
+    # h es citado por i
+    # i es citado por f
+    # j es citado por i
     #cj es la cantidad de trabajos citados por el paper pj
     W = np.zeros((11, 11))
     W[filas,columnas] = 1
+    print(f"W:{W}")
+    
     
     D = np.zeros((11, 11))
-    print(W)
+    for i in range(len(W)):
+        cantidad_1s = np.sum(W[i, : ] == 1)
+        if cantidad_1s != 0:
+            D[i,i] = round((1/cantidad_1s),2)
+    print(f"D:{D}")
+    
+    #p* = (1-d)(I)/N + (d)WDp*
+    #p*: vector de probabilidades
+    #N: tamaño de la matriz = cantidad de filas 
+    #d = probabilidad aleatoria de continuar leyendo alguno de los trabajos citados 
+    #W =  matriz qu eindic acual paper cito a otro 
+    #D = matriz que en la diagonal indica la 1/cantidad de veces que ese paper fue citado
+    #I: matri de unos con R^n
+    #reirdenado
+    #A = (I - dWD)
+    #x = p*
+    #b = (1-d)I/N
+    d = 0.85
+    N = W.shape[0]
+    I = np.ones((N,1))
+
+    A = I - (d*(np.dot(W,D)))
+    
+    b = ((1-d)/N)*I
+    
+    p_star = np.linalg.solve(A,b)
+    print(p_star)
+    
+    
+    
     
     
     
