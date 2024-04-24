@@ -107,13 +107,15 @@ def main():
    
     #ejercicio 3 con numpy
     filas = [0,0,0,1,4,5,5,6,6,6,7,8,9]
-    columnas = [2,3,4,0,10,0,6,0,7,8,8,5,8]
+    columnas = [2,3,4,0,10,6,0,7,8,0,9,5,8]
     #[A,B,C,D,E,F,G,H,I,J,K]
     #[0,1,2,3,4,5,6,7,8,9,10]
-    # W ij = 1 , 
+    # W ij = 1 , si pj cita a pi i: el citado j: el que cita 
+    # [ac][ad][ae] [ba] [ek] [fg, fa] [gh,gi,ga] [hi] [if] [ji]
+    # [0,0,0,1,4,5,5,6,6,6,7,8,9]
+    # [2,3,4,0,10,6,0,7,8,0,9,5,8]
     # a es citado por c,d,e
     # b es citado por a
-    
     # e es citado por k
     # f es citado po g,a
     # g es citado por h,i,a
@@ -140,15 +142,17 @@ def main():
     #W =  matriz qu eindic acual paper cito a otro 
     #D = matriz que en la diagonal indica la 1/cantidad de veces que ese paper fue citado
     #I: matri de unos con R^n
-    #reirdenado
+    #reordenado
     #A = (I - dWD)
     #x = p*
     #b = (1-d)I/N
+    
     d = 0.85
     N = W.shape[0]
     I = np.ones((N,1))
 
     A = I - (d*(np.dot(W,D)))
+    print(A)
     
     b = ((1-d)/N)*I
     
