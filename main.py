@@ -127,10 +127,12 @@ def main():
     W[filas,columnas] = 1
     print(f"W:{W}")
     
-    
+    cantidad_1s = 0
     D = np.zeros((11, 11))
     for i in range(len(W)):
-        cantidad_1s = np.sum(W[i, : ] == 1)
+        for j in range(len(W)):
+            if  W[i,j] == 1:
+                cantidad_1s += 1
         if cantidad_1s != 0:
             D[i,i] = round((1/cantidad_1s),2)
     print(f"D:{D}")
@@ -152,12 +154,14 @@ def main():
     I = np.ones((N,1))
 
     A = I - (d*(np.dot(W,D)))
-    print(A)
+    
+    A_1 = np.linalg.pinv(A)
+    
     
     b = ((1-d)/N)*I
-    
-    p_star = np.linalg.solve(A,b)
-    print(p_star)
+  
+    p_stars = np.dot(A_1,b)
+    print(p_stars)
     
     
     
