@@ -1,4 +1,5 @@
 from matricesRalas import *
+import numpy as np
 
 def main():
     # ##probando con listas enlazadas
@@ -100,6 +101,19 @@ def main():
     b[0,0] = 3
     x = GaussJordan(A,b)
     print(x)
+    
+    #W ∈ RN×N tal que Wij = 1 si pj cita a pi y Wij = 0 sino. A la matriz diagonal D ∈ RN×N condii = 1 /ci
+   #Y siendo 1 el vector de RN de todos unos.
+    #ejercicio 3
+    filas = [0,0,0,1,4,5,5,6,6,6,7,8,9]
+    columnas = [2,3,4,0,10,0,6,0,7,8,8,5,8]
+    #cj es la cantidad de trabajos citados por el paper pj
+    W = np.zeros((11, 11))
+    W[filas,columnas] = 1
+    
+    D = np.zeros((11, 11))
+    print(W)
+    
     
     
     

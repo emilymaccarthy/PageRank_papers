@@ -265,7 +265,7 @@ class MatrizRala:
             
                 
         
-
+#ejerciciio2
 def GaussJordan( A, b ):
     # Hallar solucion x para el sistema Ax = b
     # Devolver error si el sistema no tiene solucion o tiene infinitas soluciones, con el mensaje apropiado
