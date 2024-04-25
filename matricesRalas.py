@@ -388,14 +388,9 @@ def GaussJordan( A, b ):
     for i in range(A.shape[0]):
         #en realidad es tipo todos deberian se runos pero weno
         vector_sol.append(mat_aumentada[i,mat_aumentada.shape[1]-1])
-        
+ 
     return vector_sol
        
-            
-            
-            
-                
-    return sol
 
 #auxiliares
 def generar_idt(m):
