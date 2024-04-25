@@ -210,8 +210,9 @@ class MatrizRala:
     
     def __sub__( self, other ):
         # Esta funcion implementa la resta de matrices (pueden usar suma y producto) -> A - B
-        if self.shape != other.shape:
-            raise ValueError("los tamaños no son iguales")
+        
+        if self.shape[0] != other.shape[0]:
+            raise ValueError("los tamaños de las filas no son iguales")
         
         resultado = MatrizRala(self.shape[0],self.shape[1])
         B = other.__rmul__(-1)
@@ -262,7 +263,55 @@ class MatrizRala:
         for i in range(self.shape[1]):
             resultado.append(self.__getitem__((numero_fila,i)))
         return resultado
-            
+    
+    def generar_idt(self):
+        if self.shape[0] != self.shape[1]:
+            raise ValueError("la matriz no es cuadrada")
+        
+        for i in self.shape[0]:
+            self.__setitem__((i,i),1)
+       
+
+        
+    def generar_inv(self):
+       
+        if self.shape[0] != self.shape[1]:
+            raise ValueError("la matriz no es cuadrada")
+        
+        identidad = MatrizRala(self.shape[0],self.shape[0])
+        resultado = MatrizRala(self.shape[0],self.shape[0])
+        
+        for i in range(self.shape[0]):
+            for j in range(self.shape[0]):
+                resultado[i,j] = self[i,j]
+                
+        identidad.generar_idt()
+        
+        for i in range(self.shape[0]):
+            factor = 1.0 / self[i,i]
+            for j in range(self.shape[0]):
+                resultado.__setitem__((i,j),resultado[i,j]*factor)
+                identidad.__setitem__((i,j),identidad[i,j]*factor)
+            for k in range(self.shape[0]):
+                if k!=i:
+                    factor = self[k,i]
+                    for j in range(self.shape[0]):
+                        res = resultado[k,j] - (factor*resultado[i,j])
+                        res2 = identidad[k,j] - (factor*identidad[i,j])
+                        resultado.__setitem__((k,j),res)
+                        identidad.__setitem__((k,j),res2)
+                        
+        return identidad
+    
+    def __copy__(self):
+        resultado = MatrizRala(self.shape[0],self.shape[1])
+        for i in range(self.shape[0]):
+            for j in range(self.shape[0]):
+                resultado[i,j] = self[i,j]
+                
+        return resultado
+                        
+        
                 
         
 #ejerciciio2

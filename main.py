@@ -105,6 +105,14 @@ def main():
     #W ∈ RN×N tal que Wij = 1 si pj cita a pi y Wij = 0 sino. A la matriz diagonal D ∈ RN×N condii = 1 /ci
    #Y siendo 1 el vector de RN de todos unos.
    
+    A = MatrizRala(2,2)
+    A[0,0] = 4
+    A[0,1] = 7
+    A[1,0] = 2
+    A[1,1] = 6
+    
+    inversa = A.__copy__()
+    print(inversa)
     
     
     
