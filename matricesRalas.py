@@ -190,21 +190,28 @@ class MatrizRala:
         # Esta funcion implementa el producto escalar-matriz -> k * A
         return self * k
 
-    def __add__( self, other ):
+    def __add__( self, other):
         # Esta funcion implementa la suma de matrices -> A + B
         
-        if self.shape != other.shape:
+        if self.shape[0] != other.shape[0]:
             raise ValueError("los tamaños no son iguales")
         
         resultado = MatrizRala(self.shape[0],self.shape[1])
         # para cada fila
-        for i in range(self.shape[0]):
-            #para cada columna
-            for j in range(self.shape[1]):
-                #sumar la posiciones
-                suma = self[i, j] + other[i, j]
-                if suma != 0:
-                    resultado[i, j] = suma
+        if other.shape[1] == 1:
+            for i in range(self.shape[0]):
+                for j in range(self.shape[1]):
+                    suma = self[i,j] + other[i,1]
+                    if suma != 0:
+                        resultado[i,j] = suma
+        else:
+            for i in range(self.shape[0]):
+                #para cada columna
+                for j in range(self.shape[1]):
+                    #sumar la posiciones
+                    suma = self[i, j] + other[i, j]
+                    if suma != 0:
+                        resultado[i, j] = suma
         return resultado
 
     
