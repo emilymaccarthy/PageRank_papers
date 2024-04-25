@@ -383,17 +383,24 @@ def GaussJordan( A, b ):
                     mat_aumentada.__setitem__((i,j),res)
                 else:
                     mat_aumentada.__setitem__((i,j),0.0)
-                    
-    
+    vector_sol = []   
+       
+    for i in range(A.shape[0]):
+        #en realidad es tipo todos deberian se runos pero weno
+        vector_sol.append(mat_aumentada[i,mat_aumentada.shape[1]-1])
+        
+    return vector_sol
+       
+            
+            
+            
                 
     return sol
 
 #auxiliares
-def generar_idt(A):
-    if A.shape[0] != A.shape[1]:
-        raise ValueError("la matriz no es cuadrada")
-    
-    B = MatrizRala(A.shape[0],A.shape[1])
+def generar_idt(m):
+
+    B = MatrizRala(m,m)
     for i in range(B.shape[0]):
         B.__setitem__((i,i),1)
     
