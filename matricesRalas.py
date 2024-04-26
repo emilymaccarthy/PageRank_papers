@@ -271,6 +271,13 @@ class MatrizRala:
             resultado.append(self.__getitem__((numero_fila,i)))
         return resultado
     
+    @staticmethod
+    def One(n:int):
+        M = MatrizRala(n,n)
+        for i in range(n):
+            M[i,i] = 1
+        return M
+    
     
     
     def __copy__(self):
