@@ -149,6 +149,62 @@ class TestProductoMatricial:
         with pytest.raises(Exception) as e_info:
             C = A @ B
 
+    def test_productoPorUnidad(self):
+        A = MatrizRala(3,3)
+        B = MatrizRala(3,3)
+
+        A[0,0] = 1
+        A[0,1] = 0
+        A[0,2] = 0
+        A[1,0] = 0
+        A[1,1] = 1
+        A[1,2] = 0
+        A[2,0] = 0
+        A[2,1] = 0
+        A[2,2] = 1
+
+        B[0,0] = 1
+        B[0,1] = 2
+        B[0,2] = 3
+        B[1,0] = 4
+        B[1,1] = 5
+        B[1,2] = 6
+        B[2,0] = 7
+        B[2,1] = 8
+        B[2,2] = 9
+
+        C = A @ B
+
+        assert np.allclose( [B[i,j] for i in range(3) for j in range(3)], [C[i,j] for i in range(3) for j in range(3)] )
+
+    def test_productoPorCero(self):
+        A = MatrizRala(3,3)
+        B = MatrizRala(3,3)
+
+        A[0,0] = 1
+        A[0,1] = 2
+        A[0,2] = 3
+        A[1,0] = 4
+        A[1,1] = 5
+        A[1,2] = 6
+        A[2,0] = 7
+        A[2,1] = 8
+        A[2,2] = 9
+
+        B[0,0] = 0
+        B[0,1] = 0
+        B[0,2] = 0
+        B[1,0] = 0
+        B[1,1] = 0
+        B[1,2] = 0
+        B[2,0] = 0
+        B[2,1] = 0
+        B[2,2] = 0
+
+        C = A @ B
+
+        assert np.allclose( np.zeros(9), [C[i,j] for i in range(3) for j in range(3)] )
+
     def test_productoAndaBien(self):
         A = MatrizRala(2,3)
         B = MatrizRala(3,3)
@@ -162,12 +218,12 @@ class TestProductoMatricial:
         B[1,1]=2
 
         RES[0,0] = 9
-        RES[0,1] = 2
+        RES[1,0] = 12
 
         C = A @ B
 
         assert np.allclose( [RES[i,j] for i in range(2) for j in range(2)], [C[i,j] for i in range(2) for j in range(2)] )
-"""
+
     def test_productoPorIdentidad( self ):
         A = MatrizRala(3,3)
         Id = MatrizRala(3,3)
@@ -209,5 +265,4 @@ class TestProductoMatricial:
 #        
 #        assert 
 
-"""
 """

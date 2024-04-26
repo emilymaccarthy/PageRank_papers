@@ -243,12 +243,12 @@ class MatrizRala:
         #para todas las filas de self 
         for i in range(self.shape[0]): #valor de m
             #para todas las comlunas de other
-            for j in range(self.shape[1]): #valor de n 
+            for j in range(other.shape[1]): #valor de n 
                 suma = 0
                 #recorre las columnas de self y las filas de other 
                 for k in range(self.shape[1]):
-                    suma += self[i,k]*other[k,j]
-                
+                    suma += self[i,k] * other[k,j]
+                    
                 resultado[i,j]=suma
                
         return resultado
