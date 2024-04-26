@@ -107,9 +107,6 @@ class TestSumaMatrices:
 
         assert np.allclose( np.zeros(4), [C[i,j] for i in range(2) for j in range(2)] )
 
-
-        
-
 class TestProductoPorEscalar:
     def test_escalaCorrectamente( self ):
         A = MatrizRala(3,3)
@@ -257,12 +254,39 @@ class TestProductoMatricial:
         assert 1 == 1
 
         # assert np.allclose( np.zeros(9), [C[i,j] for i in range(3) for j in range(3)] )
-"""
-#class GaussJordan:
-#    def test_soltrivial(self):
-#        A = MatrizRala(3,3)
-#        B = MatrizRala(3,1)
-#        
-#        assert 
 
-"""
+
+
+class TestGaussJordan:
+   def setup_method(self):
+        self.A = MatrizRala(3,3)
+
+        self.A[0,0] = 1
+        self.A[0,1] = 0
+        self.A[0,2] = 0
+        self.A[1,0] = 0
+        self.A[1,1] = 1
+        self.A[1,2] = 0
+        self.A[2,0] = 0
+        self.A[2,1] = 0
+        self.A[2,2] = 1
+
+        self.b = MatrizRala(3,1)
+
+   def test_soltrivial(self):
+
+        self.b[0,0] = 1
+        self.b[1,0] = 2
+        self.b[2,0] = 3
+
+        x = GaussJordan(self.A, self.b)
+        print([self.b[i,0] for i in range(3)])
+        print([x[i,0] for i in range(3)] )
+
+        assert np.allclose( [self.b[i,0] for i in range(3)], [x[i,0] for i in range(3)] )
+    
+    
+
+       
+
+

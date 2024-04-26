@@ -312,18 +312,22 @@ class MatrizRala:
 #ejerciciio2
 def GaussJordan( A, b ):
     # Hallar solucion x para el sistema Ax = b
+
+    
     # Devolver error si el sistema no tiene solucion o tiene infinitas soluciones, con el mensaje apropiado
     sol = "el sistema tieene sol"
     M, N = A.shape
     #Asegúrate de que b es del tamaño adecuado
     if A.shape[0] != b.shape[0]:
-        sol = "el sistema no tiene sol"
-        return sol
+        raise ValueError("Las dimensiones de A y b no coinciden")
         
     
     if A.shape[0] < A.shape[1]:
-        sol = "tiene infinitas soluciones"
-        return sol
+        raise ValueError("El sistema tiene infinitas soluciones")
+    
+    
+    if b.shape[1] != 1:
+        raise ValueError("b no es un vector columna")
 
     #Crear la matriz extendida con A y b
     mat_aumentada = MatrizRala(M, N + 1)
