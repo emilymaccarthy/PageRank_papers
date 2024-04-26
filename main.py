@@ -1,4 +1,5 @@
 from matricesRalas import *
+import numpy as np
 
 
 def main():
@@ -105,15 +106,42 @@ def main():
     #W ∈ RN×N tal que Wij = 1 si pj cita a pi y Wij = 0 sino. A la matriz diagonal D ∈ RN×N condii = 1 /ci
    #Y siendo 1 el vector de RN de todos unos.
    
-    A = MatrizRala(2,2)
-    A[0,0] = 4
-    A[0,1] = 7
-    A[1,0] = 2
-    A[1,1] = 6
+    # A = MatrizRala(2,2)
+    # A[0,0] = 4
+    # A[0,1] = 7
+    # A[1,0] = 2
+    # A[1,1] = 6
     
-    inversa = A.__copy__()
-    print(inversa)
+    # inversa = A.__copy__()
+    # print(inversa)
+    A = MatrizRala(2,1)
+    b = MatrizRala(2,1)
+        ## opcion 1: sol unica
+    A[0,0] = 0
     
+        
+    A[1,0] = 3
+       
+        
+       
+    b[0,0] = 5
+    b[1,0] = 1
+      
+        
+    x = GaussJordan(A,b) 
+    print(x)
+    # res = [x[i,0] for i in range(2)]
+    # print(res)    
+    
+    min_val, max_val = 0, 10
+    A_mat = np.random.randint(min_val, max_val, size=(10, 10))
+    b_mat = np.random.randint(min_val, max_val, size=(10, 10))
+    print(A_mat)
+    print(b_mat)
+    x = np.linalg.solve(A_mat,b_mat)
+    
+    print(x)
+
     
     
     

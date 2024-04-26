@@ -3,7 +3,7 @@
 #   2- Correr en la terminal "pytest tests.py"
 
 import pytest
-from matricesRalas import MatrizRala, GaussJordan 
+from matricesRalas import *
 import numpy as np
 
 class TestIndexacionMatrices:
@@ -255,10 +255,10 @@ class TestProductoMatricial:
 
         # assert np.allclose( np.zeros(9), [C[i,j] for i in range(3) for j in range(3)] )
 
-
+##8 +4 +3 + 6 = 21
 
 class TestGaussJordan:
-   def setup_method(self):
+    def setup_method(self):
         self.A = MatrizRala(3,3)
 
         self.A[0,0] = 1
@@ -273,7 +273,7 @@ class TestGaussJordan:
 
         self.b = MatrizRala(3,1)
 
-   def test_soltrivial(self):
+    def test_soltrivial(self):
 
         self.b[0,0] = 1
         self.b[1,0] = 2
@@ -284,6 +284,157 @@ class TestGaussJordan:
         print([x[i,0] for i in range(3)] )
 
         assert np.allclose( [self.b[i,0] for i in range(3)], [x[i,0] for i in range(3)] )
+    
+    def test_no_posibilidad(self):
+        A = MatrizRala(3,1)
+        b = MatrizRala(2,1)
+        
+        with pytest.raises(Exception) as e_info:
+            x = GaussJordan(A,b)
+            
+        assert "Las dimensiones de A y b no coinciden" in str(e_info.value)
+        
+     
+    def test_mat_2x2_solunica(self):
+        A = MatrizRala(2,2)
+        b = MatrizRala(2,1)
+        ## opcion 1: sol unica
+        A[0,0] = 5
+        A[0,1] = 2
+        A[1,0] = -3
+        A[1,1] = 3
+       
+        b[0,0] = 3
+        b[1,0] = 15
+        
+        x = GaussJordan(A,b) 
+        
+        assert np.allclose([-1,4],[x[i,0] for i in range(2)])
+
+    def test_mat_2x2_infsol(self):
+        A = MatrizRala(2,2)
+        b = MatrizRala(2,1)
+        #opcion 2: sol infinitas
+        A[0,0] = 3
+        A[0,1] = -1
+        A[1,0] = -6
+        A[1,1] = 2
+        
+        b[0,0] = 2
+        b[1,0] = -4
+        
+        x = GaussJordan(A,b)  
+        
+        assert "El sistema tiene infinitas soluciones" and x
+    
+    def test_mat_2x3_infsol(self):
+        A = MatrizRala(2,3)
+        b = MatrizRala(2,1)
+        ## opcion 1: sol unica
+        A[0,0] = 3
+        A[0,1] = -1
+        A[0,2] = 7
+       
+        A[1,0] = 6
+        A[1,1] = 0
+        A[1,2] = 1
+      
+       
+        b[0,0] = 1
+        b[1,0] = 2
+       
+        
+        x = GaussJordan(A,b) 
+        
+        assert "El sistema tiene infinitas soluciones" and x
+        
+    def test_mat_3x3_solunica(self):
+        A = MatrizRala(3,3)
+        b = MatrizRala(3,1)
+        ## opcion 1: sol unica
+        A[0,0] = 5
+        A[0,1] = 2
+        A[0,2] = 0
+        
+        A[1,0] = 2
+        A[1,1] = 1
+        A[1,2] = -1
+        
+        A[2,0] = 2
+        A[2,1] = 3
+        A[2,2] = -1
+       
+        b[0,0] = 2
+        b[1,0] = 0
+        b[2,0] = 3
+        
+        x = GaussJordan(A,b) 
+        
+        assert np.allclose([-0.2,1.5,1.1],[x[i,0] for i in range(3)])
+        
+    def test_mat_2x1(self):
+        A = MatrizRala(2,1)
+        b = MatrizRala(2,1)
+        ## opcion 1: sol unica
+        A[0,0] = 0
+    
+        
+        A[1,0] = 3
+       
+        
+       
+        b[0,0] = 5
+        b[1,0] = 1
+      
+        
+        x = GaussJordan(A,b) 
+        
+        assert "El sistema tiene infinitas soluciones" and x
+        
+        
+    def test_mat_1x2(self):
+        A = MatrizRala(1,2)
+        b = MatrizRala(1,1)
+        ## opcion 1: sol unica
+        A[0,0] = 1
+    
+        
+        A[0,1] = 3
+       
+        
+       
+        b[0,0] = 5
+    
+      
+        
+        x = GaussJordan(A,b) 
+        
+        assert "El sistema tiene infinitas soluciones" and x
+        
+    # def mat_3x1(self):
+        
+    # def mat_1x3(self):
+        
+    def test_mat_10x10(self):
+        min_val, max_val = 0, 10
+        A_mat = np.random.randint(min_val, max_val, size=(10, 10))
+        b_mat = np.random.randint(min_val, max_val, size=(10, 1))
+    
+        x_mat = np.linalg.solve(A_mat,b_mat)
+        
+        A = pasarAMatrizRala(A_mat)
+        b = pasarAMatrizRala(b_mat)
+        
+        x = GaussJordan(A,b)
+        if np.allclose(np.dot(A_mat, x_mat), b_mat):
+            print("El sistema tiene una solución única.")
+            assert np.allclose(x_mat, [x[i,0] for i in range(10)])
+        else:
+            print("El sistema no tiene una solución única.")
+            
+        
+    
+    #
     
     
 

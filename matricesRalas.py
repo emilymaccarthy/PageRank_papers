@@ -315,15 +315,15 @@ def GaussJordan( A, b ):
 
     
     # Devolver error si el sistema no tiene solucion o tiene infinitas soluciones, con el mensaje apropiado
-    sol = "el sistema tieene sol"
+    sol = "El sistema tiene una solucion"
     M, N = A.shape
     #Asegúrate de que b es del tamaño adecuado
     if A.shape[0] != b.shape[0]:
         raise ValueError("Las dimensiones de A y b no coinciden")
-        
-    
+       
+   
     if A.shape[0] < A.shape[1]:
-        raise ValueError("El sistema tiene infinitas soluciones")
+        return  "El sistema tiene infinitas soluciones"
     
     
     if b.shape[1] != 1:
@@ -335,7 +335,7 @@ def GaussJordan( A, b ):
         for j in range(N):
             mat_aumentada[i, j] = A[i, j]
         mat_aumentada[i, N] = b[i,0]
-    
+    print(mat_aumentada)
     
     #Eliminación por debajo 
     
@@ -344,7 +344,7 @@ def GaussJordan( A, b ):
         pivot = mat_aumentada[i, i]
         if pivot == 0:
             #raise ValueError("El sistema no tiene solución única")
-            sol = "el sistema no tiene sol unica"
+            sol = "El sistema tiene infinitas soluciones"
             continue
     
         #para todas las filas debajo de i 
@@ -365,7 +365,8 @@ def GaussJordan( A, b ):
                 fila_pivot = mat_aumentada[i,k] * factor
                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
          
-    contador0 = 0       
+     
+    print(mat_aumentada)   
     #eliminacion hacia arriba
     for i in range(1,A.shape[0]):
         pivot = mat_aumentada[i, i]
@@ -389,16 +390,20 @@ def GaussJordan( A, b ):
                 #la filadel pivot actual que estamos calculando 
                 fila_pivot = mat_aumentada[i,k] * factor
                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
+    print(mat_aumentada)
     #chequeo si es inconsistente            
     for i in range(A.shape[0]):
+        contador0 = 0   
         for j in range(mat_aumentada.shape[1]):
             if mat_aumentada[i,j] == 0:
                 contador0 += 1
-
+        print(mat_aumentada[i,mat_aumentada.shape[1]-1] )
+        print(contador0)
+        print(A.shape[0])
         if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == A.shape[1]:
-            sol = "sistema es incosistente, no tiene solucion"
+            sol = "El sistema es incosistente, no tiene solucion"
             return sol
-        
+    
     #hacer unos en los pivots 
    
     #para cada fila 
@@ -413,15 +418,35 @@ def GaussJordan( A, b ):
                 else:
                     mat_aumentada.__setitem__((i,j),0.0)
     matriz_sol = MatrizRala(A.shape[0],1)  
-       
-    for i in range(A.shape[0]):
-        #en realidad es tipo todos deberian se runos pero weno
-        valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
-        matriz_sol[i,0] = valor
- 
-    return matriz_sol
-       
+    
+    #si tiene infinitas soluciones
+    # if sol == "El sistema tiene infinitas soluciones":
+    #     for i in range(A.shape[0]):
+    #         if mat_aumentada[i,i] == 0:
+    #             valor = ""
+    #     #en realidad es tipo todos deberian se runos pero weno
+    #         valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
+    #         matriz_sol[i,0] = valor
+    
+    if sol != "El sistema tiene infinitas soluciones":    
+        #esto seria si tiene sol unica
+        for i in range(A.shape[0]):
+            #en realidad es tipo todos deberian se runos pero weno
+            valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
+            matriz_sol[i,0] = valor
+    
+        return matriz_sol
+    
+    return sol
 
+def pasarAMatrizRala(matriz):
+    B = MatrizRala(matriz.shape[0],matriz.shape[1])
+    for fila in range(matriz.shape[0]):
+        for columna in range(matriz.shape[1]):
+            B[fila,columna] = matriz[fila][columna]
+            
+    return B
+    
 #auxiliares
 def generar_idt(m):
 
