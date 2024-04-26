@@ -112,6 +112,10 @@ class MatrizRala:
         
         # tupla dada por la funcion m= filas y n = columnas
         m,n = Idx
+
+        if m >= self.shape[0] or n >= self.shape[1]:
+            raise IndexError('Index fuera de rango')
+
         #si la fila pasada por parametro existe en el diccionario
         if m in self.filas:
             #obtenemos la lista enlazada para esa fila
@@ -132,6 +136,10 @@ class MatrizRala:
         
         # Esta funcion implementa la asignacion durante indexacion ( Idx es una tupla (m,n) ) -> A[m,n] = v
         m,n = Idx
+
+        if m >= self.shape[0] or n >= self.shape[1]:
+            raise IndexError('Index fuera de rango')
+
         # si la fila no esta computada 
         if m not in self.filas:
             self.filas[m] = ListaEnlazada()
@@ -270,6 +278,16 @@ class MatrizRala:
         for i in range(self.shape[1]):
             resultado.append(self.__getitem__((numero_fila,i)))
         return resultado
+    
+    def sum(self):
+        suma = 0
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                val = self[i,j]
+                if val < 0:
+                    val = val * -1
+                suma += self[i,j]
+        return suma
     
     @staticmethod
     def One(n:int):
