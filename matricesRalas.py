@@ -390,13 +390,14 @@ def GaussJordan( A, b ):
                     mat_aumentada.__setitem__((i,j),res)
                 else:
                     mat_aumentada.__setitem__((i,j),0.0)
-    vector_sol = []   
+    matriz_sol = MatrizRala(A.shape[0],1)  
        
     for i in range(A.shape[0]):
         #en realidad es tipo todos deberian se runos pero weno
-        vector_sol.append(mat_aumentada[i,mat_aumentada.shape[1]-1])
+        valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
+        matriz_sol[i,0] = valor
  
-    return vector_sol
+    return matriz_sol
        
 
 #auxiliares
