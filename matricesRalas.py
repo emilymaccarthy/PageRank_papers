@@ -522,7 +522,22 @@ class MatrizRala:
         
         return dif
 
-
+    @staticmethod
+    def fromNumpy(A):
+        m,n = A.shape
+        res = MatrizRala(m,n)
+        for i in range(m):
+            for j in range(n):
+                res[i,j] = A[i,j]
+        return res
+    
+def pasarAMatrizRala(matriz):
+    B = MatrizRala(matriz.shape[0],matriz.shape[1])
+    for fila in range(matriz.shape[0]):
+        for columna in range(matriz.shape[1]):
+            B[fila,columna] = matriz[fila][columna]
+        
+    return B
 #ejercicio 2    
 def GaussJordan( A, b ):
     # Hallar solucion x para el sistema Ax = b
@@ -793,13 +808,7 @@ def GaussJordan( A, b ):
     
 #     return sol
 
-def pasarAMatrizRala(matriz):
-    B = MatrizRala(matriz.shape[0],matriz.shape[1])
-    for fila in range(matriz.shape[0]):
-        for columna in range(matriz.shape[1]):
-            B[fila,columna] = matriz[fila][columna]
-            
-    return B
+
 
 def GaussVerification(A,b,x):
     # Verificar que x sea solución del sistema Ax = b
