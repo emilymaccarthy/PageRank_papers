@@ -233,24 +233,7 @@ class MatrizRala:
         
         return resultado
     
-    def __matmul__( self, other ):
-        # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
-        if self.shape[1] != other.shape[0]:
-            raise ValueError("los tamaños no se pueden multiplicar")
-        resultado = MatrizRala(self.shape[0],other.shape[1])
-        #para todas las filas de self 
-        for i in range(self.shape[0]): #valor de m
-            #para todas las comlunas de other
-            for j in range(other.shape[1]): #valor de n 
-                suma = 0
-                #recorre las columnas de self y las filas de other 
-                for k in range(self.shape[1]):
-                    suma += self[i,k] * other[k,j]
-                    
-                resultado[i,j]=suma
-               
-        return resultado
-
+    # ORIGINAL EMY
     # def __matmul__( self, other ):
     #     # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
     #     if self.shape[1] != other.shape[0]:
@@ -262,18 +245,102 @@ class MatrizRala:
     #         for j in range(other.shape[1]): #valor de n 
     #             suma = 0
     #             #recorre las columnas de self y las filas de other 
-    #             currentNode = self.return_fila_entera()
-                
     #             for k in range(self.shape[1]):
-    #                 index_k = currentNode.valor[0][1]
-    #                 suma += currentNode.valor[1] * other[index_k,j]
-    #                 currentNode.__next__()
+    #                 suma += self[i,k] * other[k,j]
                     
     #             resultado[i,j]=suma
                
     #     return resultado
 
+    def __matmul__( self, other ):
+        # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
+        if self.shape[1] != other.shape[0]:
+            raise ValueError("los tamaños no se pueden multiplicar")
+        resultado = MatrizRala(self.shape[0],other.shape[1])
+        #para todas las filas de self 
+        for current_i in self.filas: #valor de m
+            fila = self.filas[current_i]
+            rootNode = fila.raiz
 
+            
+            for j in range(other.shape[1]):
+                currentNode = rootNode
+                suma = 0
+                while currentNode is not None:
+                    
+                    current_j = currentNode.valor[0]
+                    suma += currentNode.valor[1] * other[current_j,j]
+                    currentNode = currentNode.siguiente
+
+                resultado[current_i,j] = suma
+
+        return resultado
+                
+
+
+            #para todas las comlunas de other
+        #     for j in range(other.shape[1]): #valor de n     1 0 0 1        1 0  =    0 0
+        #         #                                           0 1 0 0        0 1       0 0 
+        #         #                                                          1 0       
+        #         #                                                          1 1       
+        #         suma = 0
+        #         #recorre las columnas de self y las filas de other 
+                
+        #         for k in range(self.shape[1]):
+        #             index_k = currentNode.valor[0][1]
+        #             suma += currentNode.valor[1] * other[index_k,j]
+        #             currentNode.__next__()
+                    
+        #         resultado[i,j]=suma
+               
+        # return resultado
+
+
+
+
+# NEW EMY 
+
+
+# def __matmul__( self, other ):
+#         # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
+#         if self.shape[1] != other.shape[0]:
+#             raise ValueError("los tamaños no se pueden multiplicar")
+#         resultado = MatrizRala(self.shape[0],other.shape[1])
+#         #para todas las filas de self 
+#         for i_self in self.filas: #valor de m
+#             #aca estamos en la primer key que tiene un numero si la fila 0 no existe se va a ir a donde sea 
+#             fila_self = self.fila[i_self]
+#             currentNode1 = fila_self.raiz
+#             ##despues podemos agregar la clasula que si es 0 a la mierda
+#             for j_other in other.fila:
+#                 #ahora estamos en la primer columna que exista 
+#                 fila_other = other.fila[j_other]
+#                 currentNode2 = fila_other.raiz
+#                 #recorro todo 
+
+
+            
+#             current_j = currentNode.valor[0][1]
+            
+#             while currentNode is not None:
+
+
+#             #para todas las comlunas de other
+#             for j in range(other.shape[1]): #valor de n     1 0 0 1        1 0  =    0 0
+#                 #                                           0 1 0 0        0 1       0 0 
+#                 #                                                          1 0       
+#                 #                                                          1 1       
+#                 suma = 0
+#                 #recorre las columnas de self y las filas de other 
+                
+#                 for k in range(self.shape[1]):
+#                     index_k = currentNode.valor[0][1]
+#                     suma += currentNode.valor[1] * other[index_k,j]
+#                     currentNode.__next__()
+                    
+#                 resultado[i,j]=suma
+               
+#         return resultado
         
     def __repr__( self ):
         res = 'MatrizRala([ \n'
@@ -335,6 +402,33 @@ class MatrizRala:
             
         return resultado
 
+    def inversa(self):
+        if self.shape[0] != self.shape[1]:
+            raise ValueError("la matriz no es cuadrada")
+            
+        identidad = MatrizRala.One(self.shape[0])
+        resultado = MatrizRala(self.shape[0],self.shape[0])
+            
+        for i in range(self.shape[0]):
+            for j in range(self.shape[0]):
+                resultado[i,j] = self[i,j]
+            
+        for i in range(self.shape[0]):
+            factor = 1.0 / self[i,i]
+                
+            for j in range(self.shape[0]):
+                resultado[i,j] *= factor
+                identidad[i,j] *= factor
+                    
+            for k in range(self.shape[0]):
+                if k!=i:
+                    factor = resultado[k,i]
+                        
+                    for j in range(self.shape[0]):
+                        resultado[k,j] -= factor*resultado[i,j]
+                        identidad[k,j] -= factor*identidad[i,j]
+                            
+        return identidad   
 
     @staticmethod
     def One(n:int):
@@ -380,53 +474,82 @@ class MatrizRala:
                 
         return W
 
+    @staticmethod
+    def getVectorOne(n):
+        unos = MatrizRala(n,1)
+
+        for i in range(n):
+            unos[i,0] = 1
+
+        return unos
     
-    
-    
-                        
+    @staticmethod
+    def diffVectors(v1,v2):
+        """Agarra dos matricesRalas que son de 1 columna y compara su diferencia absoluta 
+        por cada posicion y suma todas las diferencias
+
+        Args:
+            A (MatrizRala): Matriz de nx1
+            B (MatrizRala): matriz de nx1
+
+        Raises:
+            ValueError: si las matrices no tienen la misma cantidad de filas
+
+        Returns:
+            int: Devuelve la sumatoria de las diferencias posicion a posicion
+        """
+        # Verificar que los vectores tengan la misma longitud
+        if v1.shape[0] != v2.shape[0]:
+            raise ValueError("Los vectores deben tener la misma longitud.")
         
-                
+        # Calcular la norma L1 de la diferencia entre los vectores
+        dif = 0
+        for i in range(v1.shape[0]):
+            diferencia_absoluta = abs(v1[i,0] - v2[i,0])
+            dif += diferencia_absoluta
         
-#ejerciciio2
+        return dif
+
+#ejercicio 2    
 def GaussJordan( A, b ):
     # Hallar solucion x para el sistema Ax = b
-
-    
     # Devolver error si el sistema no tiene solucion o tiene infinitas soluciones, con el mensaje apropiado
-    sol = "El sistema tiene una solucion"
-    M, N = A.shape
-    #Asegúrate de que b es del tamaño adecuado
-    if A.shape[0] != b.shape[0]:
-        raise ValueError("Las dimensiones de A y b no coinciden")
-       
-   
-    if A.shape[0] < A.shape[1]:
-        return  "El sistema tiene infinitas soluciones"
     
-
+    M, N = A.shape
+    
+    #Asegúrate de que b es del tamaño adecuado
+    if M != b.shape[0]:
+        raise ValueError("Las dimensiones de A y b no coinciden")
+    
+    #Si hay mas columnas que filas el sistema va a tener variables libres 
+    if M < N:
+        raise ValueError("El sistema tiene infinitas soluciones")
+    
+    #Si b no es una columna
     if b.shape[1] != 1:
         raise ValueError("b no es un vector columna")
 
-    #Crear la matriz extendida con A y b
+
+#--------Crear la matriz extendida con A y b----------
+
     mat_aumentada = MatrizRala(M, N + 1)
     for i in range(M):
         for j in range(N):
             mat_aumentada[i, j] = A[i, j]
         mat_aumentada[i, N] = b[i,0]
-    print(mat_aumentada)
+   
+    # print(mat_aumentada)
     
-    #Eliminación por debajo 
+#---------------Eliminación por debajo --------------
     
-    #para todas las filas
-    for i in range(A.shape[0]):
+    for i in range(M):
         pivot = mat_aumentada[i, i]
+        
         if pivot == 0:
-            #raise ValueError("El sistema no tiene solución única")
-            sol = "El sistema tiene infinitas soluciones"
-            continue
-    
+            raise ValueError("El sistema tiene infinitas soluciones")
+            
         #para todas las filas debajo de i 
-        for j in range(i+1, A.shape[0]):
+        for j in range(i+1, M):
         
             #agarro el elemento debajo del pivot
             factor = mat_aumentada[j,i]
@@ -434,20 +557,27 @@ def GaussJordan( A, b ):
             #si ya hay un cero debajo del 
             if factor == 0: 
                 continue
+            
             #para todas las columnas 
             for k in range(mat_aumentada.shape[1]):
                 
                 #para la fila debajo del pvito
                 fila_debajo = mat_aumentada[j,k] * pivot 
-                #la filadel pivot actual que estamos calculando 
+                
+                #la fila del pivot actual que estamos calculando 
                 fila_pivot = mat_aumentada[i,k] * factor
+                
                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
          
      
-    print(mat_aumentada)   
-    #eliminacion hacia arriba
-    for i in range(1,A.shape[0]):
+    # print(mat_aumentada)   
+    
+#----------------------Eliminacion hacia arriba---------------
+
+    for i in range(1,M):
+        
         pivot = mat_aumentada[i, i]
+        
         if pivot == 0:
             continue
     
@@ -460,6 +590,7 @@ def GaussJordan( A, b ):
             #si ya hay un cero debajo del pivot no hago el for k 
             if factor == 0: 
                 continue
+            
             #para todas las columnas 
             for k in range(mat_aumentada.shape[1]):
                 
@@ -468,54 +599,186 @@ def GaussJordan( A, b ):
                 #la filadel pivot actual que estamos calculando 
                 fila_pivot = mat_aumentada[i,k] * factor
                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
+    
     print(mat_aumentada)
-    #chequeo si es inconsistente            
-    for i in range(A.shape[0]):
+    
+#-------------------------Chequeo si es inconsistente-----------------
+    
+    for i in range(M):
+        
         contador0 = 0   
+        
         for j in range(mat_aumentada.shape[1]):
             if mat_aumentada[i,j] == 0:
                 contador0 += 1
-        print(mat_aumentada[i,mat_aumentada.shape[1]-1] )
-        print(contador0)
-        print(A.shape[0])
-        if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == A.shape[1]:
+                
+        # print(mat_aumentada[i,mat_aumentada.shape[1]-1] )
+        # print(contador0)
+        # print(A.shape[0])
+        
+        if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == N:
             sol = "El sistema es incosistente, no tiene solucion"
             return sol
+        
+    print(mat_aumentada)
     
-    #hacer unos en los pivots 
+#--------------------Hacer unos en los pivots-----------------
    
-    #para cada fila 
+    
     for i in range(A.shape[0]):
-        #para cada columnas
+        #para cada columnas agarrar el pivot como factor 
         factor = mat_aumentada[i,i]
+        
         if factor != 0:
             for j in range(mat_aumentada.shape[1]):
+                #si el elemento a dividirn es diferente de cero
                 if mat_aumentada[i,j] != 0:
+                    #cambio la fila entera
                     res = mat_aumentada[i,j]/factor
                     mat_aumentada.__setitem__((i,j),res)
                 else:
                     mat_aumentada.__setitem__((i,j),0.0)
+                    
     matriz_sol = MatrizRala(A.shape[0],1)  
     
-    #si tiene infinitas soluciones
-    # if sol == "El sistema tiene infinitas soluciones":
-    #     for i in range(A.shape[0]):
-    #         if mat_aumentada[i,i] == 0:
-    #             valor = ""
-    #     #en realidad es tipo todos deberian se runos pero weno
-    #         valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
-    #         matriz_sol[i,0] = valor
     
-    if sol != "El sistema tiene infinitas soluciones":    
-        #esto seria si tiene sol unica
-        for i in range(A.shape[0]):
-            #en realidad es tipo todos deberian se runos pero weno
-            valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
-            matriz_sol[i,0] = valor
+#-----------Si tiene sol unica---------------
+
+    for i in range(A.shape[0]):
+        #en realidad es tipo todos deberian se runos pero weno
+        valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
+        matriz_sol[i,0] = valor
     
-        return matriz_sol
+    return matriz_sol    
+# #ejerciciio2 (version vieja)
+# def GaussJordan( A, b ):
+#     # Hallar solucion x para el sistema Ax = b
+
     
-    return sol
+#     # Devolver error si el sistema no tiene solucion o tiene infinitas soluciones, con el mensaje apropiado
+#     sol = "El sistema tiene una solucion"
+#     M, N = A.shape
+#     #Asegúrate de que b es del tamaño adecuado
+#     if A.shape[0] != b.shape[0]:
+#         raise ValueError("Las dimensiones de A y b no coinciden")
+       
+   
+#     if A.shape[0] < A.shape[1]:
+#         return  "El sistema tiene infinitas soluciones"
+    
+
+#     if b.shape[1] != 1:
+#         raise ValueError("b no es un vector columna")
+
+#     #Crear la matriz extendida con A y b
+#     mat_aumentada = MatrizRala(M, N + 1)
+#     for i in range(M):
+#         for j in range(N):
+#             mat_aumentada[i, j] = A[i, j]
+#         mat_aumentada[i, N] = b[i,0]
+#     print(mat_aumentada)
+    
+#     #Eliminación por debajo 
+    
+#     #para todas las filas
+#     for i in range(A.shape[0]):
+#         pivot = mat_aumentada[i, i]
+#         if pivot == 0:
+#             #raise ValueError("El sistema no tiene solución única")
+#             sol = "El sistema tiene infinitas soluciones"
+#             continue
+    
+#         #para todas las filas debajo de i 
+#         for j in range(i+1, A.shape[0]):
+        
+#             #agarro el elemento debajo del pivot
+#             factor = mat_aumentada[j,i]
+            
+#             #si ya hay un cero debajo del 
+#             if factor == 0: 
+#                 continue
+#             #para todas las columnas 
+#             for k in range(mat_aumentada.shape[1]):
+                
+#                 #para la fila debajo del pvito
+#                 fila_debajo = mat_aumentada[j,k] * pivot 
+#                 #la filadel pivot actual que estamos calculando 
+#                 fila_pivot = mat_aumentada[i,k] * factor
+#                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
+         
+     
+#     print(mat_aumentada)   
+#     #eliminacion hacia arriba
+#     for i in range(1,A.shape[0]):
+#         pivot = mat_aumentada[i, i]
+#         if pivot == 0:
+#             continue
+    
+#         #para todas las filas sobre i 
+#         for j in range(i-1, -1, -1):
+           
+#             #agarro el elemento arriba del pivot
+#             factor = mat_aumentada[j,i]
+            
+#             #si ya hay un cero debajo del pivot no hago el for k 
+#             if factor == 0: 
+#                 continue
+#             #para todas las columnas 
+#             for k in range(mat_aumentada.shape[1]):
+                
+#                 #para la fila debajo del pvito
+#                 fila_debajo = mat_aumentada[j,k] * pivot 
+#                 #la filadel pivot actual que estamos calculando 
+#                 fila_pivot = mat_aumentada[i,k] * factor
+#                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
+#     print(mat_aumentada)
+#     #chequeo si es inconsistente            
+#     for i in range(A.shape[0]):
+#         contador0 = 0   
+#         for j in range(mat_aumentada.shape[1]):
+#             if mat_aumentada[i,j] == 0:
+#                 contador0 += 1
+#         print(mat_aumentada[i,mat_aumentada.shape[1]-1] )
+#         print(contador0)
+#         print(A.shape[0])
+#         if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == A.shape[1]:
+#             sol = "El sistema es incosistente, no tiene solucion"
+#             return sol
+    
+#     #hacer unos en los pivots 
+   
+#     #para cada fila 
+#     for i in range(A.shape[0]):
+#         #para cada columnas
+#         factor = mat_aumentada[i,i]
+#         if factor != 0:
+#             for j in range(mat_aumentada.shape[1]):
+#                 if mat_aumentada[i,j] != 0:
+#                     res = mat_aumentada[i,j]/factor
+#                     mat_aumentada.__setitem__((i,j),res)
+#                 else:
+#                     mat_aumentada.__setitem__((i,j),0.0)
+#     matriz_sol = MatrizRala(A.shape[0],1)  
+    
+#     #si tiene infinitas soluciones
+#     # if sol == "El sistema tiene infinitas soluciones":
+#     #     for i in range(A.shape[0]):
+#     #         if mat_aumentada[i,i] == 0:
+#     #             valor = ""
+#     #     #en realidad es tipo todos deberian se runos pero weno
+#     #         valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
+#     #         matriz_sol[i,0] = valor
+    
+#     if sol != "El sistema tiene infinitas soluciones":    
+#         #esto seria si tiene sol unica
+#         for i in range(A.shape[0]):
+#             #en realidad es tipo todos deberian se runos pero weno
+#             valor = mat_aumentada[i,mat_aumentada.shape[1]-1]
+#             matriz_sol[i,0] = valor
+    
+#         return matriz_sol
+    
+#     return sol
 
 def pasarAMatrizRala(matriz):
     B = MatrizRala(matriz.shape[0],matriz.shape[1])
@@ -552,8 +815,6 @@ def generar_idt(m):
         B.__setitem__((i,i),1)
     
     return B
-       
-
         
 def generar_inv(A): 
     if A.shape[0] != A.shape[1]:

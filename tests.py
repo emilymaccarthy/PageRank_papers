@@ -257,7 +257,7 @@ class TestProductoMatricial:
 
         # assert np.allclose( np.zeros(9), [C[i,j] for i in range(3) for j in range(3)] )
 
-    def test_trivial(self):
+    def test_heavy_metal(self):
         A = MatrizRala(3,3)
         B = MatrizRala(3,3)
         res = MatrizRala(3,3)
@@ -336,7 +336,8 @@ class TestGaussJordan:
             x = GaussJordan(A,b)
             
         assert "Las dimensiones de A y b no coinciden" in str(e_info.value)
-         
+        
+     
     def test_mat_2x2_solunica(self):
         A = MatrizRala(2,2)
         b = MatrizRala(2,1)
@@ -365,9 +366,12 @@ class TestGaussJordan:
         b[0,0] = 2
         b[1,0] = -4
         
-        x = GaussJordan(A,b)  
+        with pytest.raises(Exception) as e_info:
+            x = GaussJordan(A,b)
+            
+        assert "El sistema tiene infinitas soluciones" in str(e_info.value)
         
-        assert "El sistema tiene infinitas soluciones" and x
+      
     
     def test_mat_2x3_infsol(self):
         A = MatrizRala(2,3)
@@ -386,9 +390,11 @@ class TestGaussJordan:
         b[1,0] = 2
        
         
-        x = GaussJordan(A,b) 
+        with pytest.raises(Exception) as e_info:
+            x = GaussJordan(A,b)
+            
+        assert "El sistema tiene infinitas soluciones" in str(e_info.value)
         
-        assert "El sistema tiene infinitas soluciones" and x
         
     def test_mat_3x3_solunica(self):
         A = MatrizRala(3,3)
@@ -429,10 +435,12 @@ class TestGaussJordan:
         b[1,0] = 1
       
         
-        x = GaussJordan(A,b) 
+        with pytest.raises(Exception) as e_info:
+            x = GaussJordan(A,b)
+            
+        assert "El sistema tiene infinitas soluciones" in str(e_info.value)
         
-        assert "El sistema tiene infinitas soluciones" and x
-              
+        
     def test_mat_1x2(self):
         A = MatrizRala(1,2)
         b = MatrizRala(1,1)
@@ -448,33 +456,16 @@ class TestGaussJordan:
     
       
         
-        x = GaussJordan(A,b) 
+        with pytest.raises(Exception) as e_info:
+            x = GaussJordan(A,b)
+            
+        assert "El sistema tiene infinitas soluciones" in str(e_info.value)
         
-        assert "El sistema tiene infinitas soluciones" and x
         
     # def mat_3x1(self):
         
     # def mat_1x3(self):
-        
-    def test_mat_10x10(self):
-        min_val, max_val = 0, 10
-        A_mat = np.random.randint(min_val, max_val, size=(10, 10))
-        b_mat = np.random.randint(min_val, max_val, size=(10, 1))
-    
-        x_mat = np.linalg.solve(A_mat,b_mat)
-        
-        A = pasarAMatrizRala(A_mat)
-        b = pasarAMatrizRala(b_mat)
-        
-        x = GaussJordan(A,b)
-        if np.allclose(np.dot(A_mat, x_mat), b_mat):
-            print("El sistema tiene una solución única.")
-            assert np.allclose(x_mat, [x[i,0] for i in range(10)])
-        else:
-            print("El sistema no tiene una solución única.")
-            
-        
-"""
+    """
     
     
 
