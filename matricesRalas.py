@@ -1,6 +1,7 @@
 # IMPORTANTE: Para importar estas clases en otro archivo (que se encuentre en la misma carpeta), escribir:
 # from matricesRalas import MatrizRala, GaussJordan 
 import numpy as np
+import csv 
 
 class ListaEnlazada:
     def __init__( self ):
@@ -175,8 +176,7 @@ class MatrizRala:
         #si entro al while pero el n es mayor que todos los nodos a encontrar
         else:
             nodo_anterior.siguiente = ListaEnlazada.Nodo((n,v), None)
-                    
-        
+                            
     def __mul__( self, k ):
         
         # Esta funcion implementa el producto matriz-escalar -> A * k
@@ -192,8 +192,7 @@ class MatrizRala:
                     resultado[i, j] = valor_producto
 
         return resultado
-    
-    
+      
     def __rmul__( self, k ):
         # Esta funcion implementa el producto escalar-matriz -> k * A
         return self * k
@@ -221,8 +220,7 @@ class MatrizRala:
                 if suma != 0:
                     resultado[i, j] = suma
         return resultado
-
-    
+   
     def __sub__( self, other ):
         # Esta funcion implementa la resta de matrices (pueden usar suma y producto) -> A - B
         
@@ -252,8 +250,29 @@ class MatrizRala:
                 resultado[i,j]=suma
                
         return resultado
+
+    # def __matmul__( self, other ):
+    #     # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
+    #     if self.shape[1] != other.shape[0]:
+    #         raise ValueError("los tamaños no se pueden multiplicar")
+    #     resultado = MatrizRala(self.shape[0],other.shape[1])
+    #     #para todas las filas de self 
+    #     for i in range(self.shape[0]): #valor de m
+    #         #para todas las comlunas de other
+    #         for j in range(other.shape[1]): #valor de n 
+    #             suma = 0
+    #             #recorre las columnas de self y las filas de other 
+    #             currentNode = self.return_fila_entera()
                 
-                
+    #             for k in range(self.shape[1]):
+    #                 index_k = currentNode.valor[0][1]
+    #                 suma += currentNode.valor[1] * other[index_k,j]
+    #                 currentNode.__next__()
+                    
+    #             resultado[i,j]=suma
+               
+    #     return resultado
+
 
         
     def __repr__( self ):
@@ -268,16 +287,30 @@ class MatrizRala:
         res += '])'
 
         return res
-    
+
+    def __copy__(self):
+        resultado = MatrizRala(self.shape[0],self.shape[1])
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                resultado[i,j] = self[i,j]
+                
+        return resultado
+
     def mod_fila_entera(self,numero_fila,valores):
         for i in range(self.shape[1]):
             self[numero_fila,i] = valores[i]
             
     def return_fila_entera(self,numero_fila):
-        resultado = []
-        for i in range(self.shape[1]):
-            resultado.append(self.__getitem__((numero_fila,i)))
-        return resultado
+        # ORIGINAL EMILY
+        # resultado = []
+        # for i in range(self.shape[1]):
+        #     resultado.append(self.__getitem__((numero_fila,i)))
+        # return resultado
+
+        nodo = None
+        if numero_fila in self.filas:
+            nodo = self.filas[numero_fila].raiz
+        return nodo
     
     def sum(self):
         suma = 0
@@ -289,6 +322,20 @@ class MatrizRala:
                 suma += self[i,j]
         return suma
     
+    def getD(self):
+        resultado = MatrizRala(self.shape[0],self.shape[1])
+    
+        for i in range(self.shape[0]):
+            cantidad_1s = 0
+            for j in range(self.shape[0]):
+                if self[i,j] == 1:
+                    cantidad_1s += 1
+            if cantidad_1s != 0:
+                resultado[i,i] = 1/cantidad_1s
+            
+        return resultado
+
+
     @staticmethod
     def One(n:int):
         M = MatrizRala(n,n)
@@ -296,15 +343,46 @@ class MatrizRala:
             M[i,i] = 1
         return M
     
-    
-    
-    def __copy__(self):
-        resultado = MatrizRala(self.shape[0],self.shape[1])
-        for i in range(self.shape[0]):
-            for j in range(self.shape[0]):
-                resultado[i,j] = self[i,j]
+    @staticmethod
+    def getW(dataPath:str):
+        #tengo que tener agarrar la primer columna entera de papers csv 
+        #cada posicion me da el nuumero del paper = paper + 1
+        #ahora tengo que linkear cada con citas csv para crear la matriz
+        #pj cita a pi id1 cita a id2 => W{id2,id1} =  1
+        #1. crear matriz rala con dimension numero max de citas.csv m y n el mismo numero
+        #2. recorrer citas csv por cada row ponerle set item (id2,id1) v=1
+        
+        #despues seria sobre len(ids)
+        N = 0 
+        with open(dataPath,newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader)
+              
+            N = sum(1 for row in reader)
+            csvfile.close()
+
+
+        print(f"N: = {N}")
+        W = MatrizRala(N,N)
+
+        with open(dataPath, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader) #skipping the header
+            
+            for row in reader:
+                # print("1")
+                #no existe el 0 en el papaer numero 1 2 3 4 5 etc
+                to_ = int(row[1])-1
+                from_ = int(row[0])-1
+                W[to_,from_] = 1
+            csvfile.close()
+
                 
-        return resultado
+        return W
+
+    
+    
+    
                         
         
                 
@@ -325,7 +403,7 @@ def GaussJordan( A, b ):
     if A.shape[0] < A.shape[1]:
         return  "El sistema tiene infinitas soluciones"
     
-    
+
     if b.shape[1] != 1:
         raise ValueError("b no es un vector columna")
 
@@ -446,7 +524,26 @@ def pasarAMatrizRala(matriz):
             B[fila,columna] = matriz[fila][columna]
             
     return B
-    
+
+def GaussVerification(A,b,x):
+    # Verificar que x sea solución del sistema Ax = b
+    # Devolver True si es solución, False si no lo es
+    # Asegúrate de que x sea del tamaño adecuado
+    if A.shape[1] != x.shape[0]:
+        raise ValueError("Las dimensiones de A y x no coinciden")   
+    # Asegúrate de que b sea del tamaño adecuado
+    if A.shape[0] != b.shape[0]:
+        raise ValueError("Las dimensiones de A y b no coinciden")
+    # Asegúrate de que b sea un vector columna
+    if b.shape[1] != 1:
+        raise ValueError("b no es un vector columna")
+    # Verificar que Ax = b
+    Ax = A @ x
+    for i in range(Ax.shape[0]):
+        if Ax[i,0] != b[i,0]:
+         return False
+    return True
+
 #auxiliares
 def generar_idt(m):
 

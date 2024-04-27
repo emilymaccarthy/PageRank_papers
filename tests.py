@@ -139,6 +139,8 @@ class TestProductoPorEscalar:
         C = A * 1
         assert np.allclose( np.zeros(4) + 1, [C[i,j] for i in range(2) for j in range(2)] )
 
+
+
 class TestProductoMatricial:
     def test_dimensionesEquivocadas(self):
         A = MatrizRala(2,3)
@@ -255,8 +257,49 @@ class TestProductoMatricial:
 
         # assert np.allclose( np.zeros(9), [C[i,j] for i in range(3) for j in range(3)] )
 
-##8 +4 +3 + 6 = 21
+    def test_trivial(self):
+        A = MatrizRala(3,3)
+        B = MatrizRala(3,3)
+        res = MatrizRala(3,3)
 
+        A[0,0] = 1
+        A[0,1] = 2
+        A[0,2] = 3  
+        A[1,0] = 4
+        A[1,1] = 5
+        A[1,2] = 6
+        A[2,0] = 7
+        A[2,1] = 8
+        A[2,2] = 9
+
+        B[0,0] = 1
+        B[0,1] = 2
+        B[0,2] = 3
+        B[1,0] = 4
+        B[1,1] = 5
+        B[1,2] = 6
+        B[2,0] = 7
+        B[2,1] = 8
+        B[2,2] = 9
+
+        C = A @ B
+        
+        res[0,0] = 30
+        res[0,1] = 36
+        res[0,2] = 42
+        res[1,0] = 66
+        res[1,1] = 81
+        res[1,2] = 96
+        res[2,0] = 102
+        res[2,1] = 126
+        res[2,2] = 150
+
+
+        assert np.allclose( [res[i,j] for i in range(3) for j in range(3)], [C[i,j] for i in range(3) for j in range(3)] )
+"""
+"""
+##8 +4 +3 + 6 = 21
+"""
 class TestGaussJordan:
     def setup_method(self):
         self.A = MatrizRala(3,3)
@@ -293,8 +336,7 @@ class TestGaussJordan:
             x = GaussJordan(A,b)
             
         assert "Las dimensiones de A y b no coinciden" in str(e_info.value)
-        
-     
+         
     def test_mat_2x2_solunica(self):
         A = MatrizRala(2,2)
         b = MatrizRala(2,1)
@@ -390,8 +432,7 @@ class TestGaussJordan:
         x = GaussJordan(A,b) 
         
         assert "El sistema tiene infinitas soluciones" and x
-        
-        
+              
     def test_mat_1x2(self):
         A = MatrizRala(1,2)
         b = MatrizRala(1,1)
@@ -433,8 +474,7 @@ class TestGaussJordan:
             print("El sistema no tiene una solución única.")
             
         
-    
-    #
+"""
     
     
 
