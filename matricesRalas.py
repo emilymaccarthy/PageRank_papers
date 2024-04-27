@@ -430,6 +430,18 @@ class MatrizRala:
                             
         return identidad   
 
+    def toNumpy(self):
+        m,n = self.shape
+        res = np.zeros((m,n))
+        for i in self.filas:
+            fila = self.filas[i]
+            currentNode = fila.raiz
+            while currentNode is not None:
+                j = currentNode.valor[0]
+                res[i,j] = currentNode.valor[1]
+                currentNode = currentNode.siguiente
+        return res
+
     @staticmethod
     def One(n:int):
         M = MatrizRala(n,n)
@@ -509,6 +521,7 @@ class MatrizRala:
             dif += diferencia_absoluta
         
         return dif
+
 
 #ejercicio 2    
 def GaussJordan( A, b ):
@@ -600,7 +613,7 @@ def GaussJordan( A, b ):
                 fila_pivot = mat_aumentada[i,k] * factor
                 mat_aumentada.__setitem__((j,k),fila_debajo - fila_pivot)
     
-    print(mat_aumentada)
+    # print(mat_aumentada)
     
 #-------------------------Chequeo si es inconsistente-----------------
     
@@ -620,7 +633,7 @@ def GaussJordan( A, b ):
             sol = "El sistema es incosistente, no tiene solucion"
             return sol
         
-    print(mat_aumentada)
+    # print(mat_aumentada)
     
 #--------------------Hacer unos en los pivots-----------------
    
