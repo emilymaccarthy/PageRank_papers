@@ -296,10 +296,9 @@ class TestProductoMatricial:
 
 
         assert np.allclose( [res[i,j] for i in range(3) for j in range(3)], [C[i,j] for i in range(3) for j in range(3)] )
-"""
-"""
-##8 +4 +3 + 6 = 21
-"""
+
+
+
 class TestGaussJordan:
     def setup_method(self):
         self.A = MatrizRala(3,3)
@@ -337,7 +336,6 @@ class TestGaussJordan:
             
         assert "Las dimensiones de A y b no coinciden" in str(e_info.value)
         
-     
     def test_mat_2x2_solunica(self):
         A = MatrizRala(2,2)
         b = MatrizRala(2,1)
@@ -371,8 +369,6 @@ class TestGaussJordan:
             
         assert "El sistema tiene infinitas soluciones" in str(e_info.value)
         
-      
-    
     def test_mat_2x3_infsol(self):
         A = MatrizRala(2,3)
         b = MatrizRala(2,1)
@@ -394,8 +390,7 @@ class TestGaussJordan:
             x = GaussJordan(A,b)
             
         assert "El sistema tiene infinitas soluciones" in str(e_info.value)
-        
-        
+            
     def test_mat_3x3_solunica(self):
         A = MatrizRala(3,3)
         b = MatrizRala(3,1)
@@ -439,8 +434,7 @@ class TestGaussJordan:
             x = GaussJordan(A,b)
             
         assert "El sistema tiene infinitas soluciones" in str(e_info.value)
-        
-        
+             
     def test_mat_1x2(self):
         A = MatrizRala(1,2)
         b = MatrizRala(1,1)
@@ -461,11 +455,7 @@ class TestGaussJordan:
             
         assert "El sistema tiene infinitas soluciones" in str(e_info.value)
         
-        
-    # def mat_3x1(self):
-        
-    # def mat_1x3(self):
-    """
+    
     
     
 
