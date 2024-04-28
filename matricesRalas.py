@@ -33,6 +33,14 @@ class ListaEnlazada:
         self.longitud += 1
         return self
 
+    def insertarAntesDeNodo( self, valor, nodoPosterior, nodoActual ):
+        # Inserta un elemento detras el nodo "nodoactual"
+        nuevoNodo = self.Nodo( valor, nodoActual)
+        nodoPosterior.siguiente = nuevoNodo
+
+        self.longitud += 1
+        return self
+
     def push( self, valor ):
         # Inserta un elemento al final de la lista
         if self.longitud == 0:
@@ -72,6 +80,19 @@ class ListaEnlazada:
             
         return nodoActual
         
+    def setValue( self, valor, columna ):
+        if self.longitud == 0:
+            self.raiz = self.Nodo( (columna,valor), None )
+            self.longitud += 1
+        else:
+            currentNode = self.raiz
+            while currentNode and currentNode.valor[0] < columna:
+                currentNode = currentNode.siguiente
+            # Currentnode.coluna es <= indice
+            sig_node = currentNode.siguiente
+            currentNode.siguiente = self.Nodo((columna,valor),sig_node)
+            self.longitud += 1 
+
     def __len__( self ):
         return self.longitud
 
@@ -138,45 +159,60 @@ class MatrizRala:
         
         # Esta funcion implementa la asignacion durante indexacion ( Idx es una tupla (m,n) ) -> A[m,n] = v
         m,n = Idx
-
+        
         if m >= self.shape[0] or n >= self.shape[1]:
             raise IndexError('Index fuera de rango')
-
-        # si la fila no esta computada 
+        
+        # if m not in self.filas:
+        #     self.filas[m] = ListaEnlazada(v,n)
+        #     self.filas[m].setValue(v,n)
+        #     return
+        # self.filas[m].setValue(v,n)
+        
+        # si la fila no esta existe
         if m not in self.filas:
             self.filas[m] = ListaEnlazada()
-            
+            self.filas[m].push((n,v))
+            return
+        
+        
         fila = self.filas[m]
+        
         nodo_actual = fila.raiz
         nodo_anterior = None
         
         while nodo_actual is not None:
             #si ya existita un (m,n) lo updeteamos 
             if nodo_actual.valor[0] == n:
-                nodo_actual.valor = (n, v)
+                nodo_actual.valor[1] = v
                 return 
           
-            #si recorro la lista y me paso en el valor de n ya tengo el nodo que va depsues del que tengo que crear
+            # recorri la lista y ya me pasee del valor de columna entonces tengo que meter el nodo atras de esto
+            # si recorro la lista y me paso en el valor de n ya tengo el nodo que va depsues del que tengo que crear
             elif nodo_actual.valor[0] > n:
-                #creo un nuevo nodo que apunta al nodo actual
-                nuevo_nodo = ListaEnlazada.Nodo((n,v), nodo_actual)
-                #si estoy en el principio de la lista solo hago que el nuevo nodo sea la raiz y que apunte al acutal
-                if nodo_anterior is None:
-                    fila.raiz = nuevo_nodo
-                #sino es el primero conecto el nodo anterior con el nuevo nodo
-                else:
-                    nodo_anterior.siguiente = nuevo_nodo
+                #inserto un nuevo nodo con siguietne nodo acctua
+                fila.insertarAntesDeNodo((n,v),nodo_anterior, nodo_actual)
+                # #si estoy en el principio de la lista solo hago que el nuevo nodo sea la raiz y que apunte al acutal
+                # if nodo_anterior is None:
+                #     fila.raiz = nuevo_nodo
+                # #sino es el primero conecto el nodo anterior con el nuevo nodo
+                # else:
+                # nodo_anterior.siguiente = nuevo_nodo
                 return 
             
             #avanzar en la lista
             nodo_anterior = nodo_actual
-            nodo_actual = nodo_actual.siguiente
-        #si no entre al while porque no hay lista para esa fila creo la raiz   
-        if nodo_anterior is None:
-            fila.raiz = ListaEnlazada.Nodo((n,v), None)
-        #si entro al while pero el n es mayor que todos los nodos a encontrar
-        else:
-            nodo_anterior.siguiente = ListaEnlazada.Nodo((n,v), None)
+            nodo_actual.__next__()
+        
+        self.filas[m].push((n,v))
+        # #si no entre al while porque no hay lista para esa fila creo la raiz   
+        # if nodo_anterior is None:
+        #     fila.raiz = ListaEnlazada.Nodo((n,v), None)
+        # #si entro al while pero el n es mayor que todos los nodos a encontrar
+        # else:
+        #     nodo_anterior.siguiente = ListaEnlazada.Nodo((n,v), None)
+        # """
+        # """
                             
     def __mul__( self, k ):
         
@@ -362,19 +398,21 @@ class MatrizRala:
     def getD(self):
         resultado = MatrizRala(self.shape[0],self.shape[1])
 
-        for i in self.filas:
+        for i in self.filas.keys():
             cantidad_1s = 0
             fila = self.filas[i]
-            nodo = fila.raiz
-            while nodo is not None:
-                if nodo.valor[1] == 1:
-                    cantidad_1s += 1
-                nodo = nodo.siguiente
+            resultado[i,i] = 1/len(fila)
+            # nodo = fila.raiz
+            # while nodo is not None:
+            #     if nodo.valor[1] == 1:
+            #         cantidad_1s += 1
+            #     nodo = nodo.siguiente
             
-            if cantidad_1s != 0:
-                resultado.filas[i] = ListaEnlazada()
-                fila = resultado.filas[i]
-                fila.raiz = ListaEnlazada.Nodo((i,1/cantidad_1s), None)
+            # if cantidad_1s != 0:
+            #     resultado[i,i] = 1/cantidad_1s
+            #     # resultado.filas[i] = ListaEnlazada()
+                # fila = resultado.filas[i]
+                # fila.raiz = ListaEnlazada.Nodo((i,1/cantidad_1s), None)
                 
         
         # for i in range(self.shape[0]):
@@ -459,12 +497,15 @@ class MatrizRala:
         with open(citasPath, newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             next(reader) #skipping the header
-            
+            print("HOLA")
             for row in reader:
+                print(row)
                 # print("1")
                 #no existe el 0 en el papaer numero 1 2 3 4 5 etc
                 to_ = int(row[1])-1
                 from_ = int(row[0])-1
+                print(f" from_ = {from_}, to_ = {to_}")
+                pass
                 W[to_,from_] = 1
             csvfile.close()
 
