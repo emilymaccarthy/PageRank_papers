@@ -241,12 +241,11 @@ class MatrizRala:
         resultado = MatrizRala(self.shape[0],other.shape[1])
         #para todas las filas de self 
         for current_i in self.filas: #valor de m
+            #agarro el raiz de la fila 
             fila = self.filas[current_i]
-            rootNode = fila.raiz
-
-            
+            rootNode_self = fila.raiz
             for j in range(other.shape[1]):
-                currentNode = rootNode
+                currentNode = rootNode_self
                 suma = 0
                 while currentNode is not None:
                     
@@ -257,6 +256,25 @@ class MatrizRala:
                 resultado[current_i,j] = suma
 
         return resultado
+
+        # if self.shape[1] != other.shape[0]:
+        #     raise ValueError("los tamaños no se pueden multiplicar")
+        # resultado = MatrizRala(self.shape[0],other.shape[1])
+        # #para todas las filas de self 
+        # for current_i in self.filas: #valor de m
+        #     fila = self.filas[current_i]
+        #     nodo_self = fila.raiz
+        #     while nodo_self is not None:
+        #         #si el key existe en el diccionario
+        #         if other.filas[current_i] in other.filas:
+        #             fila2 = 
+        #             v1 = 
+                    
+        #         #si no existe la key t4endria que no multiplicar esa fila ?
+        #         else:
+                    
+    
+
                 
 
 
@@ -292,9 +310,29 @@ class MatrizRala:
 
     def __copy__(self):
         resultado = MatrizRala(self.shape[0],self.shape[1])
-        for i in range(self.shape[0]):
-            for j in range(self.shape[1]):
-                resultado[i,j] = self[i,j]
+        for i in self.filas:
+            
+            fila = self.filas[i]
+            nodo = fila.raiz
+            #si hay algo en la lista
+            if nodo is not None:
+                
+                #creo una lista enlazada 
+                resultado.filas[i] = ListaEnlazada.Nodo(nodo.valor, None)  
+                #guardo la posicion del nodo nuevo
+                nuevo_nodo = resultado.filas[i]
+                #voy al proximo elemento de la lista que estoy copiando
+                nodo_actual = nodo.siguiente
+                while nodo_actual is not None:
+                    #el push agrega el valor del sigueinte nodo en la lista al final de la lista 
+                    nuevo_nodo.push(nodo_actual.valor)  
+                    #voy al siguiente nodo que se acaba de guarda
+                    nuevo_nodo = nuevo_nodo.siguiente
+                    #acanzo uno mas en la lissta og 
+                    nodo_actual = nodo_actual.siguiente
+          
+            # for j in range(self.shape[1]):
+            #     resultado[i,j] = self[i,j]
                 
         return resultado
   
@@ -314,22 +352,38 @@ class MatrizRala:
         suma = 0
         for i in range(self.shape[0]):
             for j in range(self.shape[1]):
-                val = self[i,j]
-                if val < 0:
-                    val = val * -1
-                suma += self[i,j]
+                if i in self.filas:
+                    val = self[i,j]
+                    if val < 0:
+                        val = val * -1
+                    suma += self[i,j]
         return suma
     
     def getD(self):
         resultado = MatrizRala(self.shape[0],self.shape[1])
-    
-        for i in range(self.shape[0]):
+
+        for i in self.filas:
             cantidad_1s = 0
-            for j in range(self.shape[0]):
-                if self[i,j] == 1:
+            fila = self.filas[i]
+            nodo = fila.raiz
+            while nodo is not None:
+                if nodo.valor[1] == 1:
                     cantidad_1s += 1
+                nodo = nodo.siguiente
+            
             if cantidad_1s != 0:
-                resultado[i,i] = 1/cantidad_1s
+                resultado.filas[i] = ListaEnlazada()
+                fila = resultado.filas[i]
+                fila.raiz = ListaEnlazada.Nodo((i,1/cantidad_1s), None)
+                
+        
+        # for i in range(self.shape[0]):
+        #     cantidad_1s = 0
+        #     for j in range(self.shape[0]):
+        #         if self[i,j] == 1:
+        #             cantidad_1s += 1
+        #     if cantidad_1s != 0:
+        #         resultado[i,i] = 1/cantidad_1s
             
         return resultado
 
@@ -391,7 +445,7 @@ class MatrizRala:
         
         #despues seria sobre len(ids)
         N = 0 
-        with open(paperPath,newline='') as csvfile:
+        with open(paperPath,newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             next(reader)
               
@@ -402,7 +456,7 @@ class MatrizRala:
         print(f"N: = {N}")
         W = MatrizRala(N,N)
 
-        with open(citasPath, newline='') as csvfile:
+        with open(citasPath, newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             next(reader) #skipping the header
             
@@ -447,9 +501,18 @@ class MatrizRala:
         
         # Calcular la norma L1 de la diferencia entre los vectores
         dif = 0
-        for i in range(v1.shape[0]):
-            diferencia_absoluta = abs(v1[i,0] - v2[i,0])
-            dif += diferencia_absoluta
+        for i in v1.filas:
+            fila = v1.filas[i]
+            fila2 = v2.filas[i]
+            nodo = fila.raiz
+            nodo2 = fila2.raiz
+            if nodo != None and nodo2 != None:
+                diferencia_absoluta =abs(nodo.valor[1]-nodo2.valor[1])
+                dif += diferencia_absoluta
+            
+        # for i in range(v1.shape[0]):
+        #     diferencia_absoluta = abs(v1[i,0] - v2[i,0])
+        #     dif += diferencia_absoluta
         
         return dif
 
