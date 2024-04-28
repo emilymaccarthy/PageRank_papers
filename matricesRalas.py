@@ -4,6 +4,7 @@ import numpy as np
 import csv 
 
 class ListaEnlazada:
+    
     def __init__( self ):
         """Inicializa una lista enlazada
         """
@@ -380,7 +381,7 @@ class MatrizRala:
         return M
     
     @staticmethod
-    def getW(dataPath:str):
+    def getW(paperPath:str,citasPath:str):
         #tengo que tener agarrar la primer columna entera de papers csv 
         #cada posicion me da el nuumero del paper = paper + 1
         #ahora tengo que linkear cada con citas csv para crear la matriz
@@ -390,7 +391,7 @@ class MatrizRala:
         
         #despues seria sobre len(ids)
         N = 0 
-        with open(dataPath,newline='') as csvfile:
+        with open(paperPath,newline='') as csvfile:
             reader = csv.reader(csvfile)
             next(reader)
               
@@ -401,7 +402,7 @@ class MatrizRala:
         print(f"N: = {N}")
         W = MatrizRala(N,N)
 
-        with open(dataPath, newline='') as csvfile:
+        with open(citasPath, newline='') as csvfile:
             reader = csv.reader(csvfile)
             next(reader) #skipping the header
             
