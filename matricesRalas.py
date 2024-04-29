@@ -215,14 +215,6 @@ class MatrizRala:
                 
                 nodo = nodo.siguiente
                 
-        # for i in range(self.shape[0]):
-        #     for j in range(self.shape[1]):
-        #         valor_actual = self[i, j]
-        #         valor_producto = valor_actual * k
-
-        #         if valor_producto != 0:
-        #             resultado[i, j] = valor_producto
-
         return resultado
       
     def __rmul__( self, k ):
@@ -264,8 +256,25 @@ class MatrizRala:
         resultado = self.__add__(B)
         
         return resultado
-    
-    
+    def __matmul2__( self, other ):
+
+        if self.shape[1] != other.shape[0]:
+            raise ValueError("los tamaños no se pueden multiplicar")
+
+        resultado = MatrizRala(self.shape[0],other.shape[1])
+        for i in self.fila:
+            filaA = self.fila[i]
+            currentNodoA = filaA.raiz
+
+            k = 0
+            
+            while currentNodoA:
+                j = currentNodoA.valor[0]
+                v = currentNodoA.valor[1]
+
+k +
+= other[]for  _other in other. hape[0]:
+                                      
     def __matmul__( self, other ):
         # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
         
@@ -278,26 +287,99 @@ class MatrizRala:
         for current_i in self.filas: #valor de m
             #agarro el raiz de la fila 
             fila = self.filas[current_i]
-            rootNode_self = fila.raiz
-            for j in range(other.shape[1]):
-                currentNode = rootNode_self
-                suma = 0
-                while currentNode is not None:
-                    
-                    current_j = currentNode.valor[0]
-                    suma += currentNode.valor[1] * other[current_j,j]
-                    currentNode = currentNode.siguiente
+            if fila.raiz:
+                rootNode_self = fila.raiz
+                for j in range(other.shape[1]):
+                    currentNode = rootNode_self
+                    suma = 0
+                    while currentNode is not None:
+                        
+                        current_j = currentNode.valor[0]
+                        suma += currentNode.valor[1] * other[current_j,j]
+                        currentNode = currentNode.siguiente
 
-                resultado[current_i,j] = suma
+                    resultado[current_i,j] = suma
+            # else:
+            #     resultado[current_i,j] = 0
                 
         return resultado
-
-        
+        #self
+        # [1,2,3]
+        # [2,4,6]
+        # [2,3,2]
+        #other
+        # [1,2,3]
+        # [2,4,6]
+        # [2,3,2]
+        #para cada fila [0,1,2]
+        for i in range(self.shape[0]):
+            #para cada columna [0,1,2]
+            if i in self.filas:
+                nodo_self = self.shape[i].raiz
+                columna_counter = 0
+                while nodo_self is not None:
+                    if columna_counter == nodo_self.valor[0]:
+                        #si la fila existe en el otro
+                        if nodo_self.valor[0] in other.filas:
+                            #necesito lelgar hasta el nodo i 
+                            fila = nodo.self.valor[0]
+                            nodo_other = other.filas[fila].raiz
+                            ########## est mal esta linea deberia ser otro for en alguna parte que buusque la combinacion ideal 
+                            while nodo_other[0] != i and nodo_other is not None:
+                                nodo_other = nodo_other.siguiente
+                            #llegue a la columna y existe la ditchosa 
+                            if nodo_other[0] == i:
+                                sum += nodo_self.valor[1] * nodo_other.valor[1]
+                            #nunca encontro la columna , no esta mapeada    
+                            else:
+                                sum += 0
+                        #la fila no esta maappeada para es aposicion entonce sla columna no va a estar presenta
+                        else:
+                            sum += 0
+                    else:
+                        sum += 0
+                    columna_counter += 1
+                    nodo_self = nodo_self.siguiente
+                #aca recorri toda la fila si estuviiese entera o no mismo con la columna de other 
+                resultado[i]
+            else:
+                # enrealidad no se ahcce nada esta fila no existe
+                resultado[i]  = no existe 
+                 
+            for j in range(other.shape[1]):
+                #Si la fila esta mappeada en self 
+                #i = 0, exisiste 
+                if i in self.filas:
+                    #i = 0, existe 
+                    if i in other.filas:
+                        
+                        nodo_self = self.filas[i].raiz
+                        while nodo_self is not None:
+                            #si la columna que visite existe en la fila del otro
+                            #nodo.valor[0] = 0
+                            if nodo.valor[0] in other.filas:
+                                contar_nodos = 0 #me da el numero de la columan 
+                                
+                                nodo_other = other.filas[nodo.valor[0]].raiz
+                                #llego a la columna que necesito 
+                                while contar_nodos != nodo.valor[0]:
+                                    nodo_other = nodo_other.siguiente
+                                    
+                                sum += nodo_self.valor[1] * nodo_other.valor[1]
+                                    
+                    #hago normal recorro la lista y multiplico 
+                else:
+                    resultado[i,j] = 0
         # if self.shape[1] != other.shape[0]:
         #     raise ValueError("los tamaños no se pueden multiplicar")
         # result = MatrizRala(self.shape[0],other.shape[1])
         
         
+        suma 
+        self[1,0] * other[0,2]
+        self[1,1] * other[1,2]
+        self[1,2] * other[2,2]
+        self[1,3] * other[3,2]
         
         # for i in self.filas:
         #     if i not in self.filas:
@@ -429,10 +511,13 @@ class MatrizRala:
 
         for i in self.filas:
             fila = self.filas[i]
+            # nodo = fila.raiz
+
+                
             if len(fila) != 0:
                 resultado[i,i] = 1/len(fila)
             else:
-                resultado[i,i] = 0
+                resultado[i,i] = 1
             # nodo = fila.raiz
             # while nodo is not None:
             #     if nodo.valor[1] == 1:
@@ -534,13 +619,15 @@ class MatrizRala:
     
     def sum(self):
         suma = 0
-        for i in range(self.shape[0]):
-            for j in range(self.shape[1]):
-                if i in self.filas:
-                    val = self[i,j]
-                    if val < 0:
-                        val = val * -1
-                    suma += self[i,j]
+        for i in self.filas:
+            # fila = self.filas[i]
+            nodo = self.filas[i].raiz
+            while nodo:
+                suma += nodo.valor[1]
+                nodo = nodo.siguiente
+            # suma += self[i,0]
+            # suma += fila.longitud
+
         return suma
     
     def inversa(self):
@@ -611,6 +698,7 @@ class MatrizRala:
 
         print(f"N: = {N}")
         W = MatrizRala(N,N)
+        W_t = MatrizRala(N,N)
 
         with open(citasPath, newline='') as csvfile:
             reader = csv.reader(csvfile)
@@ -625,10 +713,11 @@ class MatrizRala:
                 #print(f" from_ = {from_}, to_ = {to_}")
                 # pass
                 W[to_,from_] = 1
+                W_t[from_,to_]=1
             csvfile.close()
 
                 
-        return W
+        return W, W_t
 
     @staticmethod
     def getVectorOne(n):

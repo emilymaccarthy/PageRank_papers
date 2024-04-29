@@ -16,7 +16,7 @@ class TestIndexacionMatrices:
         A = MatrizRala(3,3)
         A[0,0] = 1
 
-        assert A[0,0] == 1
+        assert A[0,0] == 1 
 
     def test_asignarDejaCeros(self):
         A = MatrizRala(3,3)
