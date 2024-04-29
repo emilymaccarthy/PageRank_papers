@@ -21,15 +21,41 @@ class TestIndexacionMatrices:
     def test_asignarDejaCeros(self):
         A = MatrizRala(3,3)
         A[0,0] = 1
-
-        assert np.allclose( np.zeros(9), [A[i,j] if (i != j and i != 0) else 0 for i in range(3) for j in range(3)] )
-
-    def test_asignarEnMismaFila( self ):
+        matrix = [1,0,0,0,0,0,0,0,0]
+        assert np.allclose( matrix, [A[i,j] for i in range(3) for j in range(3)] )
+        
+    def test_AsignarmismaFila(self):
         A = MatrizRala(3,3)
+        A[0,1] = 1
+        A[0,2] = 2
+        
+        assert A[0,1] == 1 and A[0,2] == 2
+        
+    def test_asignartoda( self ):
+        A = MatrizRala(3,6)
         A[0,1] = 2
         A[0,0] = 1
+        A[0,2] = 1
+        A[2,2] = 3
+        A[2,1] = 2
+        A[2,3] = 1
+        A[2,5] = 3
+        A[2,4] = 2
+        A[1,5] = 1 
+        A[1,2] = 3
+        A[1,4] = 4
+        A[1,3] = 7
+        A[1,1] = 2
+        A[1,0] = 4
+        A[0,3] = 0
+        A[0,4] = 0
+        A[0,5] = 0
+        A[2,0] = 0
+        
+        matriz = [1,2,1,0,0,0,4,2,3,7,4,1,0,2,3,1,2,3]
+        print(A)
 
-        assert A[0,1] == 2 and A[0,0] == 1
+        assert np.allclose( matriz, [A[i,j] for i in range(3) for j in range(6)] )
 
     def test_reasignar( self ):
         A = MatrizRala(3,3)
@@ -42,8 +68,9 @@ class TestIndexacionMatrices:
         A = MatrizRala(3,3)
         A[0,0] = 1
         A[1,0] = 2
+        A[2,0] = 3
 
-        assert A[0,0] == 1 and A[1,0] == 2
+        assert A[0,0] == 1 and A[1,0] == 2 and A[2,0] == 3
 
     def test_asignarIndiceInvalido( self ):
         A = MatrizRala(3,3)
