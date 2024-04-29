@@ -167,12 +167,6 @@ class MatrizRala:
         if m >= self.shape[0] or n >= self.shape[1]:
             raise IndexError('Index fuera de rango')
         
-        # if m not in self.filas:
-        #     self.filas[m] = ListaEnlazada(v,n)
-        #     self.filas[m].setValue(v,n)
-        #     return
-        # self.filas[m].setValue(v,n)
-        
         # si la fila no esta existe
         if m not in self.filas:
             self.filas[m] = ListaEnlazada()
@@ -181,7 +175,6 @@ class MatrizRala:
         
         
         fila = self.filas[m]
-        
         nodo_actual = fila.raiz
         nodo_anterior = None
         
@@ -192,16 +185,9 @@ class MatrizRala:
                 return 
           
             # recorri la lista y ya me pasee del valor de columna entonces tengo que meter el nodo atras del nodo actual
-            # si recorro la lista y me paso en el valor de n ya tengo el nodo que va depsues del que tengo que crear
             elif nodo_actual.valor[0] > n:
                 #inserto un nuevo nodo con siguietne nodo acctua
                 fila.insertarAntesDeNodo((n,v),nodo_anterior, nodo_actual)
-                # #si estoy en el principio de la lista solo hago que el nuevo nodo sea la raiz y que apunte al acutal
-                # if nodo_anterior is None:
-                #     fila.raiz = nuevo_nodo
-                # #sino es el primero conecto el nodo anterior con el nuevo nodo
-                # else:
-                # nodo_anterior.siguiente = nuevo_nodo
                 return 
             
             #avanzar en la lista
@@ -211,14 +197,6 @@ class MatrizRala:
         #si el numero de columna mas grande es mas chico que el  numero de columna que yo busco entonces uso push
         self.filas[m].push((n,v))
         
-        # #si no entre al while porque no hay lista para esa fila creo la raiz   
-        # if nodo_anterior is None:
-        #     fila.raiz = ListaEnlazada.Nodo((n,v), None)
-        # #si entro al while pero el n es mayor que todos los nodos a encontrar
-        # else:
-        #     nodo_anterior.siguiente = ListaEnlazada.Nodo((n,v), None)
-        # """
-        # """
                             
     def __mul__( self, k ):
         
@@ -226,13 +204,24 @@ class MatrizRala:
         
         resultado = MatrizRala(self.shape[0],self.shape[1])
         #recorro todas las filas y todas las columnas 
-        for i in range(self.shape[0]):
-            for j in range(self.shape[1]):
-                valor_actual = self[i, j]
-                valor_producto = valor_actual * k
+        for i in self.filas:
+            fila = self.filas[i]
+            nodo = fila.raiz
+            while nodo is not None:
+                if nodo.valor[1] != 0:
+                    res = nodo.valor[1] * k
+                    col = nodo.valor[0]
+                    resultado[i,col] = res
+                
+                nodo = nodo.siguiente
+                
+        # for i in range(self.shape[0]):
+        #     for j in range(self.shape[1]):
+        #         valor_actual = self[i, j]
+        #         valor_producto = valor_actual * k
 
-                if valor_producto != 0:
-                    resultado[i, j] = valor_producto
+        #         if valor_producto != 0:
+        #             resultado[i, j] = valor_producto
 
         return resultado
       
@@ -276,102 +265,80 @@ class MatrizRala:
         
         return resultado
     
-    def transpose(self):
-        transposed = MatrizRala((self.shape[1], self.shape[0]))
-        for i in self.filas:
-            for j, value in self.filas[i].items():
-                if j not in transposed.filas:
-                    transposed.filas[j] = {}
-                transposed.filas[j][i] = value
-        return transposed
-
-    def __matmul__(A, B):
-        # B needs to be transposed first
-        B_T = B.transpose()
-
-        C = {}
-        for i in A:  # iterate over rows of A
-            if i not in C:
-                C[i] = {}
-            for k in B_T:  # iterate over rows of B^T (which are columns of B)
-                sum_product = 0
-                for j in A[i]:  # iterate over columns of A in row i
-                    if j in B_T[k]:  # check if column j of A is row j of B^T
-                        sum_product += A[i][j] * B_T[k][j]
-                if sum_product != 0:
-                    C[i][k] = sum_product
-
-        return C
-
     
-    # def __matmul__( self, other ):
-    #     # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
-    #     # if self.shape[1] != other.shape[0]:
-    #     #     raise ValueError("los tamaños no se pueden multiplicar")
-    #     # resultado = MatrizRala(self.shape[0],other.shape[1])
-    #     # #para todas las filas de self 
-    #     # for current_i in self.filas: #valor de m
-    #     #     #agarro el raiz de la fila 
-    #     #     fila = self.filas[current_i]
-    #     #     rootNode_self = fila.raiz
-    #     #     for j in range(other.shape[1]):
-    #     #         currentNode = rootNode_self
-    #     #         suma = 0
-    #     #         while currentNode is not None:
+    def __matmul__( self, other ):
+        # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
+        
+        if self.shape[1] != other.shape[0]:
+            raise ValueError("los tamaños no se pueden multiplicar")
+        
+        resultado = MatrizRala(self.shape[0],other.shape[1])
+        
+        #para todas las filas de self 
+        for current_i in self.filas: #valor de m
+            #agarro el raiz de la fila 
+            fila = self.filas[current_i]
+            rootNode_self = fila.raiz
+            for j in range(other.shape[1]):
+                currentNode = rootNode_self
+                suma = 0
+                while currentNode is not None:
                     
-    #     #             current_j = currentNode.valor[0]
-    #     #             suma += currentNode.valor[1] * other[current_j,j]
-    #     #             currentNode = currentNode.siguiente
+                    current_j = currentNode.valor[0]
+                    suma += currentNode.valor[1] * other[current_j,j]
+                    currentNode = currentNode.siguiente
 
-    #     #         resultado[current_i,j] = suma
+                resultado[current_i,j] = suma
+                
+        return resultado
 
         
-    #     if self.shape[1] != other.shape[0]:
-    #         raise ValueError("los tamaños no se pueden multiplicar")
-    #     result = MatrizRala(self.shape[0],other.shape[1])
+        # if self.shape[1] != other.shape[0]:
+        #     raise ValueError("los tamaños no se pueden multiplicar")
+        # result = MatrizRala(self.shape[0],other.shape[1])
         
         
         
-    #     for i in self.filas:
-    #         if i not in self.filas:
-    #             continue  # This row is entirely zeros
+        # for i in self.filas:
+        #     if i not in self.filas:
+        #         continue  # This row is entirely zeros
 
-    #         # Initialize the new row in the result matrix
-    #         current_row = ListaEnlazada()
+        #     # Initialize the new row in the result matrix
+        #     current_row = ListaEnlazada()
 
-    #         # We need to calculate each element C[i, j]
-    #         for j in range(other.shape[1]):  # other.shape[1] is the number of columns in B
-    #             sum_product = 0
-    #             nodoA = self.filas[i].raiz
-    #             while nodoA:
-    #                 k = nodoA.valor[0]  # column index of A
-    #                 # We need the element B[k, j], check if k is a row in B
-    #                 if k in other.filas:
-    #                     nodoB = other.filas[k].raiz
-    #                     while nodoB:
-    #                         if nodoB.valor[0] == j:
-    #                             sum_product += nodoA.valor[1] * nodoB.valor[1]
-    #                             break
-    #                         nodoB = nodoB.siguiente
-    #                 nodoA = nodoA.siguiente
+        #     # We need to calculate each element C[i, j]
+        #     for j in range(other.shape[1]):  # other.shape[1] is the number of columns in B
+        #         sum_product = 0
+        #         nodoA = self.filas[i].raiz
+        #         while nodoA:
+        #             k = nodoA.valor[0]  # column index of A
+        #             # We need the element B[k, j], check if k is a row in B
+        #             if k in other.filas:
+        #                 nodoB = other.filas[k].raiz
+        #                 while nodoB:
+        #                     if nodoB.valor[0] == j:
+        #                         sum_product += nodoA.valor[1] * nodoB.valor[1]
+        #                         break
+        #                     nodoB = nodoB.siguiente
+        #             nodoA = nodoA.siguiente
 
-    #             if sum_product != 0:
-    #                 current_row.push((j, sum_product))  # Assume push method takes a tuple (column_index, value)
+        #         if sum_product != 0:
+        #             current_row.push((j, sum_product))  # Assume push method takes a tuple (column_index, value)
 
-    #         if current_row.raiz is not None:
-    #             result.filas[i] = current_row
+        #     if current_row.raiz is not None:
+        #         result.filas[i] = current_row
 
-    #     return result
-    #     # #para todas las filas de self 
-    #     # contado2 = 0
-    #     # self_fila = 0
-    #     # other_columna = 0
-    #     # donde = self_fila, other_columna
+        # return result
+        # # #para todas las filas de self 
+        # # contado2 = 0
+        # # self_fila = 0
+        # # other_columna = 0
+        # # donde = self_fila, other_columna
         
-    #     # #recorro todo el diccionario
-    #     # for current_i in self.filas: #valor de m
-    #     #     sum = 0
-    #     #     fila = self.filas[current_i]
+        # # #recorro todo el diccionario
+        # # for current_i in self.filas: #valor de m
+        # #     sum = 0
+        # #     fila = self.filas[current_i]
         #     nodo_self = fila.raiz
         #     contador = 0
         #     #si estoy yendo fila por fila en self
@@ -415,7 +382,7 @@ class MatrizRala:
         #     #termino una fila 
                 
                     
-        # return resultado
+        
     
         #         #si no existe la key t4endria que no multiplicar esa fila ?
         #         else:
@@ -441,7 +408,7 @@ class MatrizRala:
         #         resultado[i,j]=suma
                
         # return resultado
-        
+    
     def __repr__( self ):
         res = 'MatrizRala([ \n'
         for i in range( self.shape[0] ):
@@ -455,6 +422,82 @@ class MatrizRala:
 
         return res
 
+    
+    
+    def getD(self):
+        resultado = MatrizRala(self.shape[0],self.shape[1])
+
+        for i in self.filas:
+            fila = self.filas[i]
+            if len(fila) != 0:
+                resultado[i,i] = 1/len(fila)
+            else:
+                resultado[i,i] = 0
+            # nodo = fila.raiz
+            # while nodo is not None:
+            #     if nodo.valor[1] == 1:
+            #         cantidad_1s += 1
+            #     nodo = nodo.siguiente
+            
+            # if cantidad_1s != 0:
+            #     resultado[i,i] = 1/cantidad_1s
+            #     # resultado.filas[i] = ListaEnlazada()
+                # fila = resultado.filas[i]
+                # fila.raiz = ListaEnlazada.Nodo((i,1/cantidad_1s), None)
+                
+        
+        # for i in range(self.shape[0]):
+        #     cantidad_1s = 0
+        #     for j in range(self.shape[0]):
+        #         if self[i,j] == 1:
+        #             cantidad_1s += 1
+        #     if cantidad_1s != 0:
+        #         resultado[i,i] = 1/cantidad_1s
+            
+        return resultado
+    
+    def mul_daig(self,D):
+        resultado = MatrizRala(self.shape[0], self.shape[1])
+    
+        for i in self.filas:
+            current_row = ListaEnlazada()
+            fila = self.filas[i]
+            nodo = fila.raiz
+            
+            while nodo is not None:
+              
+                columna_curr = nodo.valor[0]
+                res = nodo.valor[1] * D[columna_curr,columna_curr]
+                current_row.push((columna_curr, res))
+           
+                    
+                nodo = nodo.siguiente
+            
+            if current_row.raiz is not None:  
+                resultado.filas[i] = current_row
+        return resultado
+    
+    def mul_con_vec_col(self,b):
+        if self.shape[1] !=  b.shape[0]:
+            raise ValueError("nanana no son los tamaños bro, sabes multiplicar matrices")
+        
+        if b.shape[1] != 1:
+            raise ValueError("bro esta no es la funcion para vos")
+        
+        resultado = MatrizRala(self.shape[0],1)
+        
+        for i in self.filas:
+            res = 0
+            fila = self.filas[i]
+            nodo = fila.raiz
+            while nodo is not None:
+                res += nodo.valor[1] * b[i,0]
+                nodo = nodo.siguiente
+                
+            resultado[i,0] = res
+            
+        return resultado 
+        
     def __copy__(self):
         resultado = MatrizRala(self.shape[0],self.shape[1])
         for i in self.filas:
@@ -484,12 +527,6 @@ class MatrizRala:
         return resultado
   
     def return_fila_entera(self,numero_fila):
-        # ORIGINAL EMILY
-        # resultado = []
-        # for i in range(self.shape[1]):
-        #     resultado.append(self.__getitem__((numero_fila,i)))
-        # return resultado
-
         nodo = None
         if numero_fila in self.filas:
             nodo = self.filas[numero_fila].raiz
@@ -506,36 +543,6 @@ class MatrizRala:
                     suma += self[i,j]
         return suma
     
-    def getD(self):
-        resultado = MatrizRala(self.shape[0],self.shape[1])
-
-        for i in self.filas.keys():
-            cantidad_1s = 0
-            fila = self.filas[i]
-            resultado[i,i] = 1/len(fila)
-            # nodo = fila.raiz
-            # while nodo is not None:
-            #     if nodo.valor[1] == 1:
-            #         cantidad_1s += 1
-            #     nodo = nodo.siguiente
-            
-            # if cantidad_1s != 0:
-            #     resultado[i,i] = 1/cantidad_1s
-            #     # resultado.filas[i] = ListaEnlazada()
-                # fila = resultado.filas[i]
-                # fila.raiz = ListaEnlazada.Nodo((i,1/cantidad_1s), None)
-                
-        
-        # for i in range(self.shape[0]):
-        #     cantidad_1s = 0
-        #     for j in range(self.shape[0]):
-        #         if self[i,j] == 1:
-        #             cantidad_1s += 1
-        #     if cantidad_1s != 0:
-        #         resultado[i,i] = 1/cantidad_1s
-            
-        return resultado
-
     def inversa(self):
         if self.shape[0] != self.shape[1]:
             raise ValueError("la matriz no es cuadrada")
@@ -605,18 +612,18 @@ class MatrizRala:
         print(f"N: = {N}")
         W = MatrizRala(N,N)
 
-        with open(citasPath, newline='', encoding='utf-8') as csvfile:
+        with open(citasPath, newline='') as csvfile:
             reader = csv.reader(csvfile)
             next(reader) #skipping the header
-            print("HOLA")
+            # print("HOLA")
             for row in reader:
-                print(row)
+                # print(row)
                 # print("1")
-                #no existe el 0 en el papaer numero 1 2 3 4 5 etc
-                to_ = int(row[1])-1
-                from_ = int(row[0])-1
-                print(f" from_ = {from_}, to_ = {to_}")
-                pass
+                #ai existe el 0
+                to_ = int(row[1])
+                from_ = int(row[0])
+                #print(f" from_ = {from_}, to_ = {to_}")
+                # pass
                 W[to_,from_] = 1
             csvfile.close()
 
@@ -654,13 +661,9 @@ class MatrizRala:
         # Calcular la norma L1 de la diferencia entre los vectores
         dif = 0
         for i in v1.filas:
-            fila = v1.filas[i]
-            fila2 = v2.filas[i]
-            nodo = fila.raiz
-            nodo2 = fila2.raiz
-            if nodo != None and nodo2 != None:
-                diferencia_absoluta =abs(nodo.valor[1]-nodo2.valor[1])
-                dif += diferencia_absoluta
+            diferencia_absoluta = abs(v1[1,0]-v1[1,0])
+            dif += diferencia_absoluta
+            
             
         # for i in range(v1.shape[0]):
         #     diferencia_absoluta = abs(v1[i,0] - v2[i,0])
@@ -840,29 +843,29 @@ def GaussVerification(A,b,x):
     return True
 
 
-    if A.shape[0] != A.shape[1]:
-        raise ValueError("la matriz no es cuadrada")
+    # if A.shape[0] != A.shape[1]:
+    #     raise ValueError("la matriz no es cuadrada")
         
-    identidad = generar_idt(A)
-    resultado = MatrizRala(A.shape[0],A.shape[0])
+    # identidad = generar_idt(A)
+    # resultado = MatrizRala(A.shape[0],A.shape[0])
         
-    for i in range(A.shape[0]):
-        for j in range(A.shape[0]):
-            resultado[i,j] = A[i,j]
+    # for i in range(A.shape[0]):
+    #     for j in range(A.shape[0]):
+    #         resultado[i,j] = A[i,j]
         
-    for i in range(A.shape[0]):
-        factor = 1.0 / A[i,i]
+    # for i in range(A.shape[0]):
+    #     factor = 1.0 / A[i,i]
             
-        for j in range(A.shape[0]):
-            resultado[i,j] *= factor
-            identidad[i,j] *= factor
+    #     for j in range(A.shape[0]):
+    #         resultado[i,j] *= factor
+    #         identidad[i,j] *= factor
                 
-        for k in range(A.shape[0]):
-            if k!=i:
-                factor = resultado[k,i]
+    #     for k in range(A.shape[0]):
+    #         if k!=i:
+    #             factor = resultado[k,i]
                     
-                for j in range(A.shape[0]):
-                    resultado[k,j] -= factor*resultado[i,j]
-                    identidad[k,j] -= factor*identidad[i,j]
+    #             for j in range(A.shape[0]):
+    #                 resultado[k,j] -= factor*resultado[i,j]
+    #                 identidad[k,j] -= factor*identidad[i,j]
                         
-    return identidad   
+    # return identidad   
