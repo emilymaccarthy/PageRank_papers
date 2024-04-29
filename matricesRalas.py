@@ -272,8 +272,6 @@ class MatrizRala:
                 j = currentNodoA.valor[0]
                 v = currentNodoA.valor[1]
 
-k +
-= other[]for  _other in other. hape[0]:
                                       
     def __matmul__( self, other ):
         # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
@@ -344,7 +342,8 @@ k +
                 resultado[i]
             else:
                 # enrealidad no se ahcce nada esta fila no existe
-                resultado[i]  = no existe 
+                # resultado[i]  = no existe 
+                pass
                  
             for j in range(other.shape[1]):
                 #Si la fila esta mappeada en self 
