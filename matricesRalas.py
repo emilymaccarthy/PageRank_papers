@@ -266,148 +266,23 @@ class MatrizRala:
         return resultado
     
     
+    
     def __matmul__( self, other ):
-        # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
+
         
+
         if self.shape[1] != other.shape[0]:
-            raise ValueError("los tamaños no se pueden multiplicar")
+            raise ValueError("Matrices no compatibles")
+        other_t = other.t()
+        for i in self.filas:
+            filaA = self.filas[i]
+            colB = other_t.filas[i]
+            nodoA = filaA.raiz
+            nodoB = colB.raiz
+            
+
+        pass
         
-        resultado = MatrizRala(self.shape[0],other.shape[1])
-        
-        #para todas las filas de self 
-        for current_i in self.filas: #valor de m
-            #agarro el raiz de la fila 
-            fila = self.filas[current_i]
-            rootNode_self = fila.raiz
-            for j in range(other.shape[1]):
-                currentNode = rootNode_self
-                suma = 0
-                while currentNode is not None:
-                    
-                    current_j = currentNode.valor[0]
-                    suma += currentNode.valor[1] * other[current_j,j]
-                    currentNode = currentNode.siguiente
-
-                resultado[current_i,j] = suma
-                
-        return resultado
-
-        
-        # if self.shape[1] != other.shape[0]:
-        #     raise ValueError("los tamaños no se pueden multiplicar")
-        # result = MatrizRala(self.shape[0],other.shape[1])
-        
-        
-        
-        # for i in self.filas:
-        #     if i not in self.filas:
-        #         continue  # This row is entirely zeros
-
-        #     # Initialize the new row in the result matrix
-        #     current_row = ListaEnlazada()
-
-        #     # We need to calculate each element C[i, j]
-        #     for j in range(other.shape[1]):  # other.shape[1] is the number of columns in B
-        #         sum_product = 0
-        #         nodoA = self.filas[i].raiz
-        #         while nodoA:
-        #             k = nodoA.valor[0]  # column index of A
-        #             # We need the element B[k, j], check if k is a row in B
-        #             if k in other.filas:
-        #                 nodoB = other.filas[k].raiz
-        #                 while nodoB:
-        #                     if nodoB.valor[0] == j:
-        #                         sum_product += nodoA.valor[1] * nodoB.valor[1]
-        #                         break
-        #                     nodoB = nodoB.siguiente
-        #             nodoA = nodoA.siguiente
-
-        #         if sum_product != 0:
-        #             current_row.push((j, sum_product))  # Assume push method takes a tuple (column_index, value)
-
-        #     if current_row.raiz is not None:
-        #         result.filas[i] = current_row
-
-        # return result
-        # # #para todas las filas de self 
-        # # contado2 = 0
-        # # self_fila = 0
-        # # other_columna = 0
-        # # donde = self_fila, other_columna
-        
-        # # #recorro todo el diccionario
-        # # for current_i in self.filas: #valor de m
-        # #     sum = 0
-        # #     fila = self.filas[current_i]
-        #     nodo_self = fila.raiz
-        #     contador = 0
-        #     #si estoy yendo fila por fila en self
-        #     if current_i == contado2:
-        #         #recorro todos los nodoss
-        #         while nodo_self is not None:
-        #             #si mabas matrice estan completamente llenas el contador siempre igualerse a la columna del nodo self 
-        #             #tambien el numero del contador deberia estar en el diccionario de las otras filas 
-                    
-        #             #si la fila del contador existe en other
-        #             if contador in other.filas:
-        #                 #si la columna en self existe ;fila de self y coulmna de other mismo numero igual
-        #                 if nodo_self.valor[0] == contador:
-        #                     fila2 = other.filas[contador]
-        #                     nodo_other = fila2.raiz
-        #                     #ahora tengo que verififcar que la columna de ese key existe 
-        #                     while nodo_other is not None:
-        #                         #existe la columna que estamos buscaando 
-        #                         if nodo_other.valor[0] == current_i:
-        #                             sum += nodo_self.valor[1] * nodo_other.valor[1]  
-        #                         nodo_other = nodo_other.siguiente
-                                
-        #                     #si terino esta iteracion significa que no encontro la columna que buscaba en other
-        #                     sum += 0
-        #                 #me skippie un nodo osea es un cero en  esa fila columan de self
-        #                 else:
-        #                     sum += 0
-        #             #si no existe la fila en other 
-        #             else:
-        #                 sum += 0
-                        
-        #             nodo_self = nodo_self.siguiente
-        #             contador += 1
-        #     else:
-        #         #la fila es toda de 0 osea va a ser 0 todo 
-        #         sum += 0
-                
-        #     resultado[self_fila,]
-        #     contado2 += 1
-        #     self_fila+= 1
-        #     #termino una fila 
-                
-                    
-        
-    
-        #         #si no existe la key t4endria que no multiplicar esa fila ?
-        #         else:
-                    
-    
-
-                
-
-
-            #para todas las comlunas de other
-        #     for j in range(other.shape[1]): #valor de n     1 0 0 1        1 0  =    0 0
-        #         #                                           0 1 0 0        0 1       0 0 
-        #         #                                                          1 0       
-        #         #                                                          1 1       
-        #         suma = 0
-        #         #recorre las columnas de self y las filas de other 
-                
-        #         for k in range(self.shape[1]):
-        #             index_k = currentNode.valor[0][1]
-        #             suma += currentNode.valor[1] * other[index_k,j]
-        #             currentNode.__next__()
-                    
-        #         resultado[i,j]=suma
-               
-        # return resultado
     
     def __repr__( self ):
         res = 'MatrizRala([ \n'
@@ -542,6 +417,19 @@ class MatrizRala:
                         val = val * -1
                     suma += self[i,j]
         return suma
+    
+    def t(self):
+        mat_t = MatrizRala(self.shape[0],self.shape[1])
+        for i in self.filas:
+            fila = self.filas[i]
+            nodo = fila.raiz
+            while nodo:
+                j = nodo.valor[0]
+                v = nodo.valor[1]
+                mat_t[j,i] = v
+                nodo = nodo.siguiente
+        return mat_t
+
     
     def inversa(self):
         if self.shape[0] != self.shape[1]:
