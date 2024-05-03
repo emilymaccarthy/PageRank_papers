@@ -196,8 +196,7 @@ class MatrizRala:
         
         #si el numero de columna mas grande es mas chico que el  numero de columna que yo busco entonces uso push
         self.filas[m].push((n,v))
-        
-                            
+                                
     def __mul__( self, k ):
         
         # Esta funcion implementa el producto matriz-escalar -> A * k
@@ -265,16 +264,18 @@ class MatrizRala:
         
         return resultado
     
-    
-    
     def __matmul__( self, other ):
 
         if self.shape[1] != other.shape[0]:
             raise ValueError("Matrices no compatibles")
         resultado = MatrizRala(self.shape[0],other.shape[1])
         other_t = other.t()
-        print("Ya hice la transouesta")
+        # print("Ya hice la transouesta")
+        cantFilas = len(self.filas)
+        cont_i = 0
         for i in self.filas:
+            cont_i +=1
+            print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
             filaA:ListaEnlazada = self.filas[i]
             for j in other_t.filas:
                 colB:ListaEnlazada = other_t.filas[j]
@@ -282,8 +283,7 @@ class MatrizRala:
                 if pi != 0:
                     resultado[i,j] = pi
         return resultado
-        
-    
+            
     def __repr__( self ):
         res = 'MatrizRala([ \n'
         for i in range( self.shape[0] ):
@@ -296,8 +296,6 @@ class MatrizRala:
         res += '])'
 
         return res
-
-    
     
     def getD(self):
         resultado = MatrizRala(self.shape[0],self.shape[1])
@@ -419,7 +417,7 @@ class MatrizRala:
         return suma
     
     def t(self):
-        mat_t = MatrizRala(self.shape[0],self.shape[1])
+        mat_t = MatrizRala(self.shape[1],self.shape[0])
         for i in self.filas:
             fila = self.filas[i]
             nodo = fila.raiz
@@ -429,7 +427,6 @@ class MatrizRala:
                 mat_t[j,i] = v
                 nodo = nodo.siguiente
         return mat_t
-
     
     def inversa(self):
         if self.shape[0] != self.shape[1]:
@@ -547,17 +544,33 @@ class MatrizRala:
             raise ValueError("Los vectores deben tener la misma longitud.")
         
         # Calcular la norma L1 de la diferencia entre los vectores
-        dif = 0
-        for i in v1.filas:
-            diferencia_absoluta = abs(v1[1,0]-v1[1,0])
-            dif += diferencia_absoluta
+        # dif = 0
+        # for i in v1.filas:
+        #     fila = v1.filas[i]
+        #     diferencia_absoluta = abs(v1[1,0]-v1[1,0])
+        #     dif += diferencia_absoluta
+        valorA = 0
+        valorB = 0
+        acumulado = 0
+        for i in range(v1.shape[0]):
+            if(i in v1.filas):
+                filaA = v1.filas[i]
+                valorA = filaA.raiz.valor[1]
+            
+            if(i in v2.filas):
+                filaB = v2.filas[i]
+                valorB = filaB.raiz.valor[1]
+            acumulado += abs(valorA - valorB)
+            valorA = 0
+            valorB = 0
+
             
             
         # for i in range(v1.shape[0]):
         #     diferencia_absoluta = abs(v1[i,0] - v2[i,0])
         #     dif += diferencia_absoluta
         
-        return dif
+        return acumulado
 
     @staticmethod
     def productoInterno(filaA:ListaEnlazada,filaB:ListaEnlazada):
@@ -589,7 +602,6 @@ class MatrizRala:
                 res[i,j] = A[i,j]
         return res
     
-
 #ejercicio 2    
 def GaussJordan( A, b ):
     # Hallar solucion x para el sistema Ax = b
@@ -730,7 +742,6 @@ def GaussJordan( A, b ):
         matriz_sol[i,0] = valor
     
     return matriz_sol    
-
 
 def GaussVerification(A,b,x):
     # Verificar que x sea solución del sistema Ax = b
