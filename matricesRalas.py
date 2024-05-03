@@ -269,19 +269,19 @@ class MatrizRala:
     
     def __matmul__( self, other ):
 
-        
-
         if self.shape[1] != other.shape[0]:
             raise ValueError("Matrices no compatibles")
+        resultado = MatrizRala(self.shape[0],other.shape[1])
         other_t = other.t()
+        print("Ya hice la transouesta")
         for i in self.filas:
-            filaA = self.filas[i]
-            colB = other_t.filas[i]
-            nodoA = filaA.raiz
-            nodoB = colB.raiz
-            
-
-        pass
+            filaA:ListaEnlazada = self.filas[i]
+            for j in other_t.filas:
+                colB:ListaEnlazada = other_t.filas[j]
+                pi = MatrizRala.productoInterno(filaA,colB)
+                if pi != 0:
+                    resultado[i,j] = pi
+        return resultado
         
     
     def __repr__( self ):
@@ -558,6 +558,27 @@ class MatrizRala:
         #     dif += diferencia_absoluta
         
         return dif
+
+    @staticmethod
+    def productoInterno(filaA:ListaEnlazada,filaB:ListaEnlazada):
+        suma = 0
+        nodoA = filaA.raiz
+        nodoB = filaB.raiz
+
+        while nodoA and nodoB:
+            indexA = nodoA.valor[0]
+            indexB = nodoB.valor[0]
+
+            if(indexA < indexB):
+                nodoA = nodoA.siguiente
+            elif(indexA > indexB):
+                nodoB = nodoB.siguiente
+            else:
+                suma += nodoA.valor[1] * nodoB.valor[1]
+                nodoA = nodoA.siguiente
+                nodoB = nodoB.siguiente
+
+        return suma
 
     @staticmethod
     def fromNumpy(A):
