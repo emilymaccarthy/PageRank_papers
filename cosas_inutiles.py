@@ -285,3 +285,36 @@
     #                 identidad[k,j] -= factor*identidad[i,j]
                         
     # return identidad   
+    
+    
+    
+    # def __matmul__( self, other ):
+    #     # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
+        
+    #     if self.shape[1] != other.shape[0]:
+    #         raise ValueError("los tamaños no se pueden multiplicar")
+        
+    #     resultado = MatrizRala(self.shape[0],other.shape[1])
+    #     cantFilas = len(self.filas)
+    #     cont_i = 0
+    #     #para todas las filas de self 
+    #     for current_i in self.filas: #valor de m
+    #         cont_i += 1
+    #         print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
+    #         #agarro el raiz de la fila 
+    #         fila = self.filas[current_i]
+    #         if fila.raiz:
+    #             rootNode_self = fila.raiz
+    #             for j in range(other.shape[1]):
+    #                 currentNode = rootNode_self
+    #                 suma = 0
+    #                 while currentNode is not None:
+                        
+    #                     current_j = currentNode.valor[0]
+    #                     suma += currentNode.valor[1] * other[current_j,j]
+    #                     currentNode = currentNode.siguiente
+
+    #                 resultado[current_i,j] = suma
+    #         # else:
+    #         #     resultado[current_i,j] = 0
+

@@ -270,57 +270,26 @@ class MatrizRala:
 
         return res
 
-    # def __matmul__( self, other ):
-
-    #     if self.shape[1] != other.shape[0]:
-    #         raise ValueError("Matrices no compatibles")
-    #     resultado = MatrizRala(self.shape[0],other.shape[1])
-    #     other_t = other.t()
-    #     # print("Ya hice la transouesta")
-    #     cantFilas = len(self.filas)
-    #     cont_i = 0
-    #     for i in self.filas:
-    #         cont_i +=1
-    #         print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
-    #         filaA:ListaEnlazada = self.filas[i]
-    #         for j in other_t.filas:
-    #             colB:ListaEnlazada = other_t.filas[j]
-    #             pi = MatrizRala.productoInterno(filaA,colB)
-    #             if pi != 0:
-    #                 resultado[i,j] = pi
-    #     return resultado
-    
-
     def __matmul__( self, other ):
-        # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
-        
+
         if self.shape[1] != other.shape[0]:
-            raise ValueError("los tamaños no se pueden multiplicar")
-        
+            raise ValueError("Matrices no compatibles")
         resultado = MatrizRala(self.shape[0],other.shape[1])
+        other_t = other.t()
+        # print("Ya hice la transouesta")
         cantFilas = len(self.filas)
         cont_i = 0
-        #para todas las filas de self 
-        for current_i in self.filas: #valor de m
-            cont_i += 1
-            print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
-            #agarro el raiz de la fila 
-            fila = self.filas[current_i]
-            if fila.raiz:
-                rootNode_self = fila.raiz
-                for j in range(other.shape[1]):
-                    currentNode = rootNode_self
-                    suma = 0
-                    while currentNode is not None:
-                        
-                        current_j = currentNode.valor[0]
-                        suma += currentNode.valor[1] * other[current_j,j]
-                        currentNode = currentNode.siguiente
-
-                    resultado[current_i,j] = suma
-            # else:
-            #     resultado[current_i,j] = 0
-
+        for i in self.filas:
+            cont_i +=1
+            # print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
+            filaA:ListaEnlazada = self.filas[i]
+            for j in other_t.filas:
+                colB:ListaEnlazada = other_t.filas[j]
+                pi = MatrizRala.productoInterno(filaA,colB)
+                if pi != 0:
+                    resultado[i,j] = pi
+        return resultado
+    
 
     
     def getD(self):
@@ -334,7 +303,7 @@ class MatrizRala:
             if len(fila) != 0:
                 resultado[i,i] = 1/len(fila)
             else:
-                resultado[i,i] = 1
+                resultado[i,i] = 0
            
             
         return resultado
@@ -425,6 +394,18 @@ class MatrizRala:
             # suma += fila.longitud
 
         return suma
+    
+    def t(self):
+        mat_t = MatrizRala(self.shape[1],self.shape[0])
+        for i in self.filas:
+            fila = self.filas[i]
+            nodo = fila.raiz
+            while nodo:
+                j = nodo.valor[0]
+                v = nodo.valor[1]
+                mat_t[j,i] = v
+                nodo = nodo.siguiente
+        return mat_t
     
     def inversa(self):
         if self.shape[0] != self.shape[1]:
@@ -555,6 +536,27 @@ class MatrizRala:
         #     dif += diferencia_absoluta
         
         return dif
+    
+    @staticmethod
+    def productoInterno(filaA:ListaEnlazada,filaB:ListaEnlazada):
+        suma = 0
+        nodoA = filaA.raiz
+        nodoB = filaB.raiz
+
+        while nodoA and nodoB:
+            indexA = nodoA.valor[0]
+            indexB = nodoB.valor[0]
+
+            if(indexA < indexB):
+                nodoA = nodoA.siguiente
+            elif(indexA > indexB):
+                nodoB = nodoB.siguiente
+            else:# indexA == indexB
+                suma += nodoA.valor[1] * nodoB.valor[1]
+                nodoA = nodoA.siguiente
+                nodoB = nodoB.siguiente
+
+        return suma
 
     @staticmethod
     def fromNumpy(A):
@@ -584,6 +586,11 @@ def GaussJordan( A, b ):
     #Si b no es una columna
     if b.shape[1] != 1:
         raise ValueError("b no es un vector columna")
+    
+    if A.shape[1] == 1:
+        raise ValueError("A no es matriz")
+    
+    
 
 
 #--------Crear la matriz extendida con A y b----------
@@ -596,13 +603,28 @@ def GaussJordan( A, b ):
    
     # print(mat_aumentada)
     
+   
+    
 #---------------Eliminación por debajo --------------
     
     for i in range(M):
         pivot = mat_aumentada[i, i]
         
         if pivot == 0:
-            raise ValueError("El sistema tiene infinitas soluciones")
+            key_a_cambiar = i
+            #Buscar otro pivote
+            newPivot = mat_aumentada[i,i]
+            for j in range(i+1,M):
+                newPivot = mat_aumentada[j,i]
+                if newPivot != 0:
+                    temp = mat_aumentada.filas[key_a_cambiar]
+                    mat_aumentada.filas[key_a_cambiar] = mat_aumentada.filas[j]
+                    mat_aumentada.filas[j] = temp
+                    break
+            if newPivot == 0:
+                
+               
+                raise ValueError('El sistema tiene infinitas soluciones')
             
         #para todas las filas debajo de i 
         for j in range(i+1, M):
@@ -673,8 +695,8 @@ def GaussJordan( A, b ):
         # print(A.shape[0])
         
         if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == N:
-            sol = "El sistema es incosistente, no tiene solucion"
-            return sol
+            raise ValueError('El sistema es incosistente, no tiene solucion')
+      
         
     # print(mat_aumentada)
     
