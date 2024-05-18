@@ -256,68 +256,6 @@ class MatrizRala:
         resultado = self.__add__(B)
         
         return resultado
-<<<<<<< HEAD
-    
-        
-    def __matmul__( self, other ):
-
-        
-
-        if self.shape[1] != other.shape[0]:
-            raise ValueError("Matrices no compatibles")
-        
-        resultado = MatrizRala(self.shape[0], other.shape[1])
-        
-        other_t = other.t()
-        
-        
-        
-        for i in range(self.shape[0]):
-            #la fila existe 
-            if i in self.filas:
-                nodo = self.filas[i].raiz
-                nodo_sig = nodo.siguiente
-                for j in range(other_t.shape[0]):
-                    #la fila tambien existe en other 
-                    if j in other_t.filas:
-                        nodo2 = other_t.filas[i].raiz
-                        nodo2_sig = nodo2.siguiente
-                        #si estamos en la misma columna
-                        if nodo2_sig.valor[0] == nodo_sig.valor[0]:
-                            sum += nodo.valor[1] * nodo.valor[1]
-                        #le faltan elementos 
-                        else:
-                        
-                        
-                    #la fila no existe [0000] 
-                    else:
-                        #guardo en esa columna y en todas las filas 0 
-                        for k in range(resultado.shape[0]):
-                            resultado[k,j] = 0
-                
-            else:
-                for j in range(resultado.shape[1]):
-                    resultado[i,j] = 0
-            
-
-        pass
-        
-    def t(self):
-        mat_t = MatrizRala(self.shape[0],self.shape[1])
-        for i in self.filas:
-            fila = self.filas[i]
-            nodo = fila.raiz
-            while nodo:
-                j = nodo.valor[0]
-                v = nodo.valor[1]
-                mat_t[j,i] = v
-                nodo = nodo.siguiente
-        return mat_t
-    
-    
-    def __matmul2__( self, other ):
-=======
->>>>>>> 3a8f9ba (12:57)
 
     def __repr__( self ):
         res = 'MatrizRala([ \n'
