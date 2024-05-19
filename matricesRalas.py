@@ -268,17 +268,42 @@ class MatrizRala:
         # cont_i = 0
         for i in self.filas:
             # cont_i +=1
-            # print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
+            # print(f"\r Progreso: {int((cont_i/cantFilas))*100}%",end="")
             filaA:ListaEnlazada = self.filas[i]
-           
-            for j in other_t.filas:
-                colB:ListaEnlazada = other_t.filas[j]
-                
+            nodo = filaA.raiz
+            while nodo:
+                colB:ListaEnlazada = other_t.filas[nodo.valor[0]]
                 pi = MatrizRala.productoInterno(filaA,colB)
                 if pi != 0:
-                    resultado[i,j] = pi
+                    resultado[i,nodo.valor[0]] = pi
+
+                nodo = nodo.siguiente
+           
         return resultado
     
+
+
+    def xVector(self, b ):
+
+        if self.shape[1] != b.shape[0]:
+            raise ValueError("Matrices no compatibles")
+        
+        #creo la matriz con mxp
+        resultado = MatrizRala(self.shape[0],b.shape[1])
+
+        for i in self.filas:
+            filaA:ListaEnlazada = self.filas[i]
+            nodo = filaA.raiz
+            res = 0
+            while nodo:
+                res += nodo.valor[1] * b[nodo.valor[0],0]
+                nodo = nodo.siguiente
+            resultado[i,0] = res
+        return resultado
+
+        
+
+
     def __repr__( self ):
         res = 'MatrizRala([ \n'
         for i in range( self.shape[0] ):
@@ -318,7 +343,7 @@ class MatrizRala:
     
     def mul_con_vec_col(self,b):
         if self.shape[1] !=  b.shape[0]:
-            raise ValueError("nanana no son los tamaños bro, sabes multiplicar matrices")
+            raise ValueError("naonaonao no son los tamaños bro, sabes multiplicar matrices")
         
         if b.shape[1] != 1:
             raise ValueError("bro esta no es la funcion para vos")
@@ -330,10 +355,14 @@ class MatrizRala:
             fila = self.filas[i]
             nodo = fila.raiz
             while nodo is not None:
-                res += nodo.valor[1] * b[i,0]
+
+                res += nodo.valor[1] * b[nodo.valor[0],0]
+                print(res)
                 nodo = nodo.siguiente
+            
                 
             resultado[i,0] = res
+            
             
         return resultado 
   
@@ -354,17 +383,22 @@ class MatrizRala:
                     suma += self[i,j]
         return suma
     
-    def t(self):
+    def t(self):# Transpusta para matrices Rala
         mat_t = MatrizRala(self.shape[1],self.shape[0])
         for i in self.filas:
+            if(i not in self.filas):
+                continue
             fila = self.filas[i]
             nodo = fila.raiz
-            while nodo:
+            while nodo is not None:
                 j = nodo.valor[0]
                 v = nodo.valor[1]
                 mat_t[j,i] = v
                 nodo = nodo.siguiente
+
         return mat_t
+        
+        
     
     def inversa(self):
         if self.shape[0] != self.shape[1]:

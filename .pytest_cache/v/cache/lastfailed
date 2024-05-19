@@ -1,9 +1,5 @@
 {
   "tests.py::TestGaussJordan::test_mat_2x3": true,
   "tests.py::TestGaussJordan::test_mat_10x10": true,
-  "tests.py::TestIndexacionMatrices": true,
-  "tests.py::TestSumaMatrices": true,
-  "tests.py::TestProductoPorEscalar": true,
-  "tests.py::TestProductoMatricial": true,
-  "tests.py::TestGaussJordan": true
+  "tests.py::TestGaussJordan::TestMatrizXVector::test_matxvec": true
 }
