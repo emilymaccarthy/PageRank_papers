@@ -263,45 +263,20 @@ class MatrizRala:
         
         other_t = other.t()
        
-        # print("Ya hice la transouesta")
-        # cantFilas = len(self.filas)
-        # cont_i = 0
         for i in self.filas:
-            # cont_i +=1
-            # print(f"\r Progreso: {int((cont_i/cantFilas))*100}%",end="")
             filaA:ListaEnlazada = self.filas[i]
             nodo = filaA.raiz
+            
             while nodo:
                 colB:ListaEnlazada = other_t.filas[nodo.valor[0]]
                 pi = MatrizRala.productoInterno(filaA,colB)
+                
                 if pi != 0:
                     resultado[i,nodo.valor[0]] = pi
 
                 nodo = nodo.siguiente
            
         return resultado
-    
-
-
-    def xVector(self, b ):
-
-        if self.shape[1] != b.shape[0]:
-            raise ValueError("Matrices no compatibles")
-        
-        #creo la matriz con mxp
-        resultado = MatrizRala(self.shape[0],b.shape[1])
-
-        for i in self.filas:
-            filaA:ListaEnlazada = self.filas[i]
-            nodo = filaA.raiz
-            res = 0
-            while nodo:
-                res += nodo.valor[1] * b[nodo.valor[0],0]
-                nodo = nodo.siguiente
-            resultado[i,0] = res
-        return resultado
-
-        
 
 
     def __repr__( self ):
@@ -319,60 +294,27 @@ class MatrizRala:
     
     ## funciones auxillires que ayudan en el ejercicio 3 y 4
     
-    def mul_daig(self,D):
-        resultado = MatrizRala(self.shape[0], self.shape[1])
-    
+    def xVector(self, b ):
+
+        if self.shape[1] != b.shape[0]:
+            raise ValueError("Matrices no compatibles")
+        
+        #creo la matriz con mxp
+        resultado = MatrizRala(self.shape[0],b.shape[1])
+
         for i in self.filas:
-            current_row = ListaEnlazada()
-            fila = self.filas[i]
-            nodo = fila.raiz
-            
-            while nodo is not None:
-              
-                columna_curr = nodo.valor[0]
-                res = nodo.valor[1] * D[columna_curr,columna_curr]
-                current_row.push((columna_curr, res))
-           
-                    
+            filaA:ListaEnlazada = self.filas[i]
+            nodo = filaA.raiz
+            res = 0
+            while nodo:
+                res += nodo.valor[1] * b[nodo.valor[0],0]
                 nodo = nodo.siguiente
-            
-            if current_row.raiz is not None:  
-                resultado.filas[i] = current_row
-                
+            resultado[i,0] = res
         return resultado
     
-    def mul_con_vec_col(self,b):
-        if self.shape[1] !=  b.shape[0]:
-            raise ValueError("naonaonao no son los tamaños bro, sabes multiplicar matrices")
-        
-        if b.shape[1] != 1:
-            raise ValueError("bro esta no es la funcion para vos")
-        
-        resultado = MatrizRala(self.shape[0],1)
-        
-        for i in self.filas:
-            res = 0
-            fila = self.filas[i]
-            nodo = fila.raiz
-            while nodo is not None:
-
-                res += nodo.valor[1] * b[nodo.valor[0],0]
-                print(res)
-                nodo = nodo.siguiente
-            
-                
-            resultado[i,0] = res
-            
-            
-        return resultado 
-  
-    def return_fila_entera(self,numero_fila):
-        nodo = None
-        if numero_fila in self.filas:
-            nodo = self.filas[numero_fila].raiz
-        return nodo
     
     def sum(self):
+        #suma de toda la matriz en valor unico
         suma = 0
         for i in range(self.shape[0]):
             for j in range(self.shape[1]):
@@ -383,7 +325,8 @@ class MatrizRala:
                     suma += self[i,j]
         return suma
     
-    def t(self):# Transpusta para matrices Rala
+    def t(self):
+        # Transpusta para matrices Rala
         mat_t = MatrizRala(self.shape[1],self.shape[0])
         for i in self.filas:
             if(i not in self.filas):
@@ -398,9 +341,9 @@ class MatrizRala:
 
         return mat_t
         
-        
     
     def inversa(self):
+        #inversa para mat rala
         if self.shape[0] != self.shape[1]:
             raise ValueError("la matriz no es cuadrada")
             
@@ -429,6 +372,7 @@ class MatrizRala:
         return identidad   
 
     def toNumpy(self):
+        #pasar una matriz rala a una matriz de numpy 
         m,n = self.shape
         res = np.zeros((m,n))
         for i in self.filas:
@@ -441,7 +385,6 @@ class MatrizRala:
         return res
     
     ## ejercicio 3 y 4
-    
     def getD(self):
         resultado = MatrizRala(self.shape[0],self.shape[1])
         self_t = self.t()
@@ -456,14 +399,10 @@ class MatrizRala:
     
     @staticmethod
     def getW(paperPath:str,citasPath:str):
-        #tengo que tener agarrar la primer columna entera de papers csv 
-        #cada posicion me da el nuumero del paper = paper + 1
-        #ahora tengo que linkear cada con citas csv para crear la matriz
-        #pj cita a pi id1 cita a id2 => W{id2,id1} =  1
         #1. crear matriz rala con dimension numero max de citas.csv m y n el mismo numero
         #2. recorrer citas csv por cada row ponerle set item (id2,id1) v=1
+        #pj cita a pi id1 cita a id2 => W{id2,id1} =  1
         
-        #despues seria sobre len(ids)
         N = 0 
         with open(paperPath,newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
@@ -478,16 +417,10 @@ class MatrizRala:
 
         with open(citasPath, newline='') as csvfile:
             reader = csv.reader(csvfile)
-            next(reader) #skipping the header
-            # print("HOLA")
+            next(reader) 
             for row in reader:
-                # print(row)
-                # print("1")
-                #ai existe el 0
                 to_ = int(row[1])
                 from_ = int(row[0])
-                #print(f" from_ = {from_}, to_ = {to_}")
-                # pass
                 W[to_,from_] = 1
             csvfile.close()
 
@@ -495,7 +428,6 @@ class MatrizRala:
         return W
     
     ##mas funciones auxiliares..
-    
     @staticmethod
     def One(n:int):
         """Genera la matriz identidad
@@ -549,12 +481,6 @@ class MatrizRala:
         if v1.shape[0] != v2.shape[0]:
             raise ValueError("Los vectores deben tener la misma longitud.")
         
-        # Calcular la norma L1 de la diferencia entre los vectores
-        # dif = 0
-        # for i in v1.filas:
-        #     fila = v1.filas[i]
-        #     diferencia_absoluta = abs(v1[1,0]-v1[1,0])
-        #     dif += diferencia_absoluta
         valorA = 0
         valorB = 0
         acumulado = 0
@@ -607,6 +533,7 @@ class MatrizRala:
 
     @staticmethod
     def fromNumpy(A):
+        #pasar una matriz de numpy a una matriz rlaa
         m,n = A.shape
         res = MatrizRala(m,n)
         for i in range(m):
@@ -774,31 +701,3 @@ def GaussVerification(A,b,x):
         if Ax[i,0] != b[i,0]:
          return False
     return True
-
-
-    # if A.shape[0] != A.shape[1]:
-    #     raise ValueError("la matriz no es cuadrada")
-        
-    # identidad = generar_idt(A)
-    # resultado = MatrizRala(A.shape[0],A.shape[0])
-        
-    # for i in range(A.shape[0]):
-    #     for j in range(A.shape[0]):
-    #         resultado[i,j] = A[i,j]
-        
-    # for i in range(A.shape[0]):
-    #     factor = 1.0 / A[i,i]
-            
-    #     for j in range(A.shape[0]):
-    #         resultado[i,j] *= factor
-    #         identidad[i,j] *= factor
-                
-    #     for k in range(A.shape[0]):
-    #         if k!=i:
-    #             factor = resultado[k,i]
-                    
-    #             for j in range(A.shape[0]):
-    #                 resultado[k,j] -= factor*resultado[i,j]
-    #                 identidad[k,j] -= factor*identidad[i,j]
-                        
-    # return identidad   
