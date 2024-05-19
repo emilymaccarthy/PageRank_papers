@@ -132,6 +132,8 @@ class MatrizRala:
     def __init__( self, M, N ):
         self.filas = {}
         self.shape = (M, N)
+        
+    ##ejercicio 1
 
     def __getitem__( self, Idx ):
         # Esta funcion implementa la indexacion ( Idx es una tupla (m,n) ) -> A[m,n]
@@ -213,15 +215,7 @@ class MatrizRala:
                     resultado[i,col] = res
                 
                 nodo = nodo.siguiente
-                
-        # for i in range(self.shape[0]):
-        #     for j in range(self.shape[1]):
-        #         valor_actual = self[i, j]
-        #         valor_producto = valor_actual * k
-
-        #         if valor_producto != 0:
-        #             resultado[i, j] = valor_producto
-
+   
         return resultado
       
     def __rmul__( self, k ):
@@ -236,12 +230,6 @@ class MatrizRala:
         
         resultado = MatrizRala(self.shape[0],self.shape[1])
         # para cada fila ver que onda para cuando es nxn - nx1
-        #if other.shape[1] == 1:
-            # for i in range(self.shape[0]):
-            #     for j in range(self.shape[1]):
-            #         suma = self[i,j] + other[i,1]
-            #         if suma != 0:
-            #             resultado[i,j] = suma
    
         for i in range(self.shape[0]):
             #para cada columna
@@ -264,59 +252,33 @@ class MatrizRala:
         
         return resultado
     
-    # def __matmul__( self, other ):
-
-    #     if self.shape[1] != other.shape[0]:
-    #         raise ValueError("Matrices no compatibles")
-    #     resultado = MatrizRala(self.shape[0],other.shape[1])
-    #     other_t = other.t()
-    #     # print("Ya hice la transouesta")
-    #     cantFilas = len(self.filas)
-    #     cont_i = 0
-    #     for i in self.filas:
-    #         cont_i +=1
-    #         print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
-    #         filaA:ListaEnlazada = self.filas[i]
-    #         for j in other_t.filas:
-    #             colB:ListaEnlazada = other_t.filas[j]
-    #             pi = MatrizRala.productoInterno(filaA,colB)
-    #             if pi != 0:
-    #                 resultado[i,j] = pi
-    #     return resultado
-    
-
     def __matmul__( self, other ):
         # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
         
         if self.shape[1] != other.shape[0]:
-            raise ValueError("los tamaños no se pueden multiplicar")
+            raise ValueError("Matrices no compatibles")
         
+        #creo la matriz con mxp
         resultado = MatrizRala(self.shape[0],other.shape[1])
-        cantFilas = len(self.filas)
-        cont_i = 0
-        #para todas las filas de self 
-        for current_i in self.filas: #valor de m
-            cont_i += 1
-            print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
-            #agarro el raiz de la fila 
-            fila = self.filas[current_i]
-            if fila.raiz:
-                rootNode_self = fila.raiz
-                for j in range(other.shape[1]):
-                    currentNode = rootNode_self
-                    suma = 0
-                    while currentNode is not None:
-                        
-                        current_j = currentNode.valor[0]
-                        suma += currentNode.valor[1] * other[current_j,j]
-                        currentNode = currentNode.siguiente
-
-                    resultado[current_i,j] = suma
-            # else:
-            #     resultado[current_i,j] = 0
-
-
-            
+        
+        other_t = other.t()
+       
+        # print("Ya hice la transouesta")
+        # cantFilas = len(self.filas)
+        # cont_i = 0
+        for i in self.filas:
+            # cont_i +=1
+            # print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
+            filaA:ListaEnlazada = self.filas[i]
+           
+            for j in other_t.filas:
+                colB:ListaEnlazada = other_t.filas[j]
+                
+                pi = MatrizRala.productoInterno(filaA,colB)
+                if pi != 0:
+                    resultado[i,j] = pi
+        return resultado
+    
     def __repr__( self ):
         res = 'MatrizRala([ \n'
         for i in range( self.shape[0] ):
@@ -330,37 +292,7 @@ class MatrizRala:
 
         return res
     
-    def getD(self):
-        resultado = MatrizRala(self.shape[0],self.shape[1])
-
-        for i in self.filas:
-            fila = self.filas[i]
-            if len(fila) != 0:
-                resultado[i,i] = 1/len(fila)
-            else:
-                resultado[i,i] = 0
-            # nodo = fila.raiz
-            # while nodo is not None:
-            #     if nodo.valor[1] == 1:
-            #         cantidad_1s += 1
-            #     nodo = nodo.siguiente
-            
-            # if cantidad_1s != 0:
-            #     resultado[i,i] = 1/cantidad_1s
-            #     # resultado.filas[i] = ListaEnlazada()
-                # fila = resultado.filas[i]
-                # fila.raiz = ListaEnlazada.Nodo((i,1/cantidad_1s), None)
-                
-        
-        # for i in range(self.shape[0]):
-        #     cantidad_1s = 0
-        #     for j in range(self.shape[0]):
-        #         if self[i,j] == 1:
-        #             cantidad_1s += 1
-        #     if cantidad_1s != 0:
-        #         resultado[i,i] = 1/cantidad_1s
-            
-        return resultado
+    ## funciones auxillires que ayudan en el ejercicio 3 y 4
     
     def mul_daig(self,D):
         resultado = MatrizRala(self.shape[0], self.shape[1])
@@ -381,6 +313,7 @@ class MatrizRala:
             
             if current_row.raiz is not None:  
                 resultado.filas[i] = current_row
+                
         return resultado
     
     def mul_con_vec_col(self,b):
@@ -403,34 +336,6 @@ class MatrizRala:
             resultado[i,0] = res
             
         return resultado 
-        
-    def __copy__(self):
-        resultado = MatrizRala(self.shape[0],self.shape[1])
-        for i in self.filas:
-            
-            fila = self.filas[i]
-            nodo = fila.raiz
-            #si hay algo en la lista
-            if nodo is not None:
-                
-                #creo una lista enlazada 
-                resultado.filas[i] = ListaEnlazada.Nodo(nodo.valor, None)  
-                #guardo la posicion del nodo nuevo
-                nuevo_nodo = resultado.filas[i]
-                #voy al proximo elemento de la lista que estoy copiando
-                nodo_actual = nodo.siguiente
-                while nodo_actual is not None:
-                    #el push agrega el valor del sigueinte nodo en la lista al final de la lista 
-                    nuevo_nodo.push(nodo_actual.valor)  
-                    #voy al siguiente nodo que se acaba de guarda
-                    nuevo_nodo = nuevo_nodo.siguiente
-                    #acanzo uno mas en la lissta og 
-                    nodo_actual = nodo_actual.siguiente
-          
-            # for j in range(self.shape[1]):
-            #     resultado[i,j] = self[i,j]
-                
-        return resultado
   
     def return_fila_entera(self,numero_fila):
         nodo = None
@@ -500,13 +405,20 @@ class MatrizRala:
                 res[i,j] = currentNode.valor[1]
                 currentNode = currentNode.siguiente
         return res
-
-    @staticmethod
-    def One(n:int):
-        M = MatrizRala(n,n)
-        for i in range(n):
-            M[i,i] = 1
-        return M
+    
+    ## ejercicio 3 y 4
+    
+    def getD(self):
+        resultado = MatrizRala(self.shape[0],self.shape[1])
+        self_t = self.t()
+        for i in self_t.filas:
+            fila = self_t.filas[i]
+            if len(fila) != 0:
+                resultado[i,i] = 1/len(fila)
+            else:
+                resultado[i,i] = 0
+          
+        return resultado
     
     @staticmethod
     def getW(paperPath:str,citasPath:str):
@@ -547,9 +459,36 @@ class MatrizRala:
 
                 
         return W
+    
+    ##mas funciones auxiliares..
+    
+    @staticmethod
+    def One(n:int):
+        """Genera la matriz identidad
+
+        Args:
+            n (int): Tamaño de la matriz identidad va a ser de nxn
+
+        Returns:
+            MatrizRala: Una matriz rala de tamaño nxn con 1s en la diagonal
+        """
+        M = MatrizRala(n,n)
+        for i in range(n):
+            M[i,i] = 1
+        return M
+    
+    
 
     @staticmethod
     def getVectorOne(n):
+        """Dado un n creas un vector de tamaño n con todos 1s
+
+        Args:
+            n (int): tiene que ser mas grande que 0
+
+        Returns:
+            MatrizRala: Una matriz rala con una columna y n filas llena de 1s
+        """
         unos = MatrizRala(n,1)
 
         for i in range(n):
@@ -597,16 +536,22 @@ class MatrizRala:
             valorA = 0
             valorB = 0
 
-            
-            
-        # for i in range(v1.shape[0]):
-        #     diferencia_absoluta = abs(v1[i,0] - v2[i,0])
-        #     dif += diferencia_absoluta
         
         return acumulado
 
     @staticmethod
     def productoInterno(filaA:ListaEnlazada,filaB:ListaEnlazada):
+        """Funcion auxiliar que va a hacer la multiplicacion y 
+        suma de una posicion dada por donde la fila a y la fila b esta
+        multiplica cada posicion y suma todas estas multiplicacion
+
+        Args:
+            filaA (ListaEnlazada): La Lista enlazada que queremos multiplicar y sumar
+            filaB (ListaEnlazada): La lista enlazada por la que queremos multiplicar y sumar
+
+        Returns:
+            int: Resultaddo de multiplicar ambas filas, posicion a posicion, y sumar cada una de esas multiplicaciones
+        """
         suma = 0
         nodoA = filaA.raiz
         nodoB = filaB.raiz
@@ -634,6 +579,7 @@ class MatrizRala:
             for j in range(n):
                 res[i,j] = A[i,j]
         return res
+    
     
 #ejercicio 2    
 def GaussJordan( A, b ):
