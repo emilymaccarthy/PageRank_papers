@@ -1,4 +1,4 @@
-from matricesRalas_ve import *
+from versiones_v.matricesRalas_ve import *
 import numpy as np
 
 
