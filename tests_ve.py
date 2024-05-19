@@ -3,7 +3,7 @@
 #   2- Correr en la terminal "pytest tests.py"
 
 import pytest
-from matricesRalas import *
+from matricesRalas_ve import *
 import numpy as np
 
 class TestIndexacionMatrices:
