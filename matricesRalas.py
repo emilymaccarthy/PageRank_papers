@@ -259,12 +259,9 @@ class MatrizRala:
         
         resultado = MatrizRala(self.shape[0],other.shape[1])
         other_t = other.t()
-        # print("Ya hice la transouesta")
-        # cantFilas = len(self.filas)
-        # cont_i = 0
+        
         for i in self.filas:
-            # cont_i +=1
-            # print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
+            
             filaA:ListaEnlazada = self.filas[i]
             for j in other_t.filas:
                 
@@ -290,6 +287,30 @@ class MatrizRala:
         return res
     
     ## funciones auxillires que ayudan en el ejercicio 3 y 4
+    def mul_daig(self,D):
+        resultado = MatrizRala(self.shape[0], self.shape[1])
+    
+        for i in self.filas:
+            current_row = ListaEnlazada()
+            fila = self.filas[i]
+            nodo = fila.raiz
+            
+            while nodo is not None:
+              
+                columna_curr = nodo.valor[0]
+               
+                if D[columna_curr,columna_curr] != 0:
+                    res = nodo.valor[1] * D[columna_curr,columna_curr]
+                    current_row.push((columna_curr, res))
+           
+                    
+                nodo = nodo.siguiente
+            
+            if current_row.raiz is not None:  
+                resultado.filas[i] = current_row
+                
+        return resultado
+    
     
     def xVector(self, b ):
 
