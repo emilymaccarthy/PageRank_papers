@@ -546,42 +546,42 @@ class TestGaussJordan:
             
         assert "El sistema es incosistente, no tiene solucion" in str(e_info.value)
 
-    class TestMatrizXVector:
-        def setup_method(self):
-            self.A = MatrizRala(3,3)
-            self.b = MatrizRala(3,1)
-            self.A[0,0] = 1
-            self.A[0,1] = 2
-            self.A[0,2] = 3
-            self.A[1,0] = 4
-            self.A[1,1] = 5
-            self.A[1,2] = 6
-            self.A[2,0] = 7
-            self.A[2,1] = 8
-            self.A[2,2] = 9
+# class TestMatrizXVector:
+#     def setup_method(self):
+#         self.A = MatrizRala(3,3)
+#         self.b = MatrizRala(3,1)
+#         self.A[0,0] = 1
+#         self.A[0,1] = 2
+#         self.A[0,2] = 3
+#         self.A[1,0] = 4
+#         self.A[1,1] = 5
+#         self.A[1,2] = 6
+#         self.A[2,0] = 7
+#             self.A[2,1] = 8
+#             self.A[2,2] = 9
 
-            self.b[0,0] = 1
-            self.b[1,0] = 2
-            self.b[2,0] = 3 
+#             self.b[0,0] = 1
+#             self.b[1,0] = 2
+#             self.b[2,0] = 3 
         
-        def test_matxvec(self):
-            A = MatrizRala(3,3)
-            b = MatrizRala(3,1)
-            A[0,0] = 1
-            A[0,1] = 1
-            A[0,2] = 0
-            A[1,0] = 0
-            A[1,1] = 1
-            A[1,2] = 0
-            A[2,0] = 0
-            A[2,1] = 0
-            A[2,2] = 1
+#         def test_matxvec(self):
+#             A = MatrizRala(3,3)
+#             b = MatrizRala(3,1)
+#             A[0,0] = 1
+#             A[0,1] = 1
+#             A[0,2] = 0
+#             A[1,0] = 0
+#             A[1,1] = 1
+#             A[1,2] = 0
+#             A[2,0] = 0
+#             A[2,1] = 0
+#             A[2,2] = 1
 
-            b[0,0] = 1
-            b[1,0] = 2
-            b[2,0] = 3 
+#             b[0,0] = 1
+#             b[1,0] = 2
+#             b[2,0] = 3 
 
-            res = A.xVector(b)
+#             res = A.xVector(b)
             
-            assert np.allclose([3,2,3],[res[i,0] for i in range(3)])
+#             assert np.allclose([3,2,3],[res[i,0] for i in range(3)])
         

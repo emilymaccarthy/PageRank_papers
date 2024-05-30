@@ -253,29 +253,26 @@ class MatrizRala:
         return resultado
     
     def __matmul__( self, other ):
-        # Esta funcion implementa el producto matricial (notado en Python con el operador "@" ) -> A @ B
-        
+
         if self.shape[1] != other.shape[0]:
             raise ValueError("Matrices no compatibles")
         
-        #creo la matriz con mxp
         resultado = MatrizRala(self.shape[0],other.shape[1])
-        
         other_t = other.t()
-       
+        # print("Ya hice la transouesta")
+        # cantFilas = len(self.filas)
+        # cont_i = 0
         for i in self.filas:
+            # cont_i +=1
+            # print(f"\r Progreso: {(cont_i/cantFilas)*100}%",end="")
             filaA:ListaEnlazada = self.filas[i]
-            nodo = filaA.raiz
-            
-            while nodo:
-                colB:ListaEnlazada = other_t.filas[nodo.valor[0]]
+            for j in other_t.filas:
+                
+                colB:ListaEnlazada = other_t.filas[j]
                 pi = MatrizRala.productoInterno(filaA,colB)
                 
                 if pi != 0:
-                    resultado[i,nodo.valor[0]] = pi
-
-                nodo = nodo.siguiente
-           
+                    resultado[i,j] = pi
         return resultado
 
 
@@ -560,6 +557,11 @@ def GaussJordan( A, b ):
     #Si b no es una columna
     if b.shape[1] != 1:
         raise ValueError("b no es un vector columna")
+    
+    if A.shape[1] == 1:
+        raise ValueError("A no es matriz")
+    
+    
 
 
 #--------Crear la matriz extendida con A y b----------
@@ -572,13 +574,28 @@ def GaussJordan( A, b ):
    
     # print(mat_aumentada)
     
+   
+    
 #---------------Eliminación por debajo --------------
     
     for i in range(M):
         pivot = mat_aumentada[i, i]
         
         if pivot == 0:
-            raise ValueError("El sistema tiene infinitas soluciones")
+            key_a_cambiar = i
+            #Buscar otro pivote
+            newPivot = mat_aumentada[i,i]
+            for j in range(i+1,M):
+                newPivot = mat_aumentada[j,i]
+                if newPivot != 0:
+                    temp = mat_aumentada.filas[key_a_cambiar]
+                    mat_aumentada.filas[key_a_cambiar] = mat_aumentada.filas[j]
+                    mat_aumentada.filas[j] = temp
+                    break
+            if newPivot == 0:
+                
+               
+                raise ValueError('El sistema tiene infinitas soluciones')
             
         #para todas las filas debajo de i 
         for j in range(i+1, M):
@@ -649,8 +666,8 @@ def GaussJordan( A, b ):
         # print(A.shape[0])
         
         if mat_aumentada[i,mat_aumentada.shape[1]-1] != 0 and contador0 == N:
-            sol = "El sistema es incosistente, no tiene solucion"
-            return sol
+            raise ValueError('El sistema es incosistente, no tiene solucion')
+      
         
     # print(mat_aumentada)
     
@@ -682,6 +699,7 @@ def GaussJordan( A, b ):
         matriz_sol[i,0] = valor
     
     return matriz_sol    
+  
 
 def GaussVerification(A,b,x):
     # Verificar que x sea solución del sistema Ax = b
