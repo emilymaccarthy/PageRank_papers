@@ -258,6 +258,7 @@ class MatrizRala:
             raise ValueError("Matrices no compatibles")
         
         resultado = MatrizRala(self.shape[0],other.shape[1])
+        
         other_t = other.t()
         
         for i in self.filas:
@@ -271,6 +272,7 @@ class MatrizRala:
                 if pi != 0:
                     resultado[i,j] = pi
         return resultado
+       
 
 
     def __repr__( self ):
